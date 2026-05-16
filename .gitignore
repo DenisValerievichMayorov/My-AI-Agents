@@ -1,0 +1,26 @@
+# Secrets
+google_token.json
+credentials.json
+gemini_creds_backup.json
+gemini_settings_backup.json
+.wwebjs_auth/
+.wwebjs_cache/
+
+# Logs and Private Data
+ai_chat_room.txt
+whatsapp_messages.txt
+agent.log
+heart_log.txt
+whatsapp_media/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+env/
+venv/
+
+# OS
+.DS_Store
+Thumbs.db
