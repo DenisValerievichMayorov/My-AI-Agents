@@ -226,8 +226,12 @@ def run_agent():
                 last_sender = line_str.split("]:", 1)[0] + "]:"
                 break
                 
-        if last_sender == f"[{DEVICE_NAME}]:":
-            time.sleep(5); continue
+        if last_sender:
+            clean_sender = last_sender.strip("[]: ").lower()
+            # Если отправитель — другой ИИ-агент (не Денис, не WhatsApp и не системное оповещение),
+            # мы полностью игнорируем сообщение, чтобы исключить пинг-понг теннис между устройствами.
+            if "denis" not in clean_sender and "денис" not in clean_sender and "system alert" not in clean_sender:
+                time.sleep(5); continue
             
         print(f"[{DEVICE_NAME}] Анализирую входящее сообщение...")
         

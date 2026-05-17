@@ -80,6 +80,52 @@ def query_openrouter(prompt, system_prompt="You are a helpful AI assistant.", mo
             
     return None
 
+def query_deep_reasoning(prompt, system_prompt, model="nvidia/nemotron-3-super-120b-a12b:free"):
+    """Реализует System 2 Multi-Turn Self-Correction (глубокие рассуждения с самокритикой)
+    для исключения сухой констатации фактов и выработки по-настоящему умных решений."""
+    api_key = load_openrouter_key()
+    if not api_key:
+        return None
+        
+    print("[Deep Reasoning] Шаг 1: Формирование первичного хода мыслей и анализа...")
+    draft = query_openrouter(prompt, system_prompt + "\nСделай первичный подробный набросок рассуждений.", model)
+    if not draft:
+        return None
+        
+    print("[Deep Reasoning] Шаг 2: Критическая оценка и самокоррекция (Self-Reflection)...")
+    critique_prompt = f"""
+Проанализируй наш первичный набросок мыслей и решений:
+\"\"\"
+{draft}
+\"\"\"
+
+⚠️ КРИТИЧЕСКОЕ ПРАВИЛО: Наш пользователь Денис крайне недоволен сухой констатацией известных фактов! Он требует настоящих глубоких рассуждений!
+Проведи жесткий самоанализ:
+1. Действительно ли мысли в наброске глубокие? Или это просто повторение того, что пользователь уже написал в чате?
+2. Какие РЕАЛЬНЫЕ практические советы по электрике (для Wilrijk Depot 320, MBG nv), опеке Антона или юридическим вопросам за 2023 год мы можем дать?
+3. Что мы упустили?
+Напиши жесткую критику и план по улучшению мыслей.
+"""
+    critique = query_openrouter(critique_prompt, "Ты — ИИ-Контроллер качества и критик (Quality Controller). Твоя задача — находить поверхностные ответы и требовать глубоких, проактивных мыслей.", model)
+    if not critique:
+        return draft # Возвращаем черновик, если критика не удалась
+        
+    print("[Deep Reasoning] Шаг 3: Синтез финального элитного плана на основе самокритики...")
+    synthesis_prompt = f"""
+На основе первичного наброска:
+{draft}
+
+И критического разбора ошибок:
+{critique}
+
+Сформируй финальный, превосходно оформленный ИИ-отчет для Дениса.
+Отчет ОБЯЗАТЕЛЬНО должен содержать:
+1. 💭 **Ход мыслей (Deep Reasoning):** (По-настоящему умные, глубокие пошаговые рассуждения без констатации фактов. Объясни, *почему* ты предлагаешь именно это, проанализируй риски и выгоды).
+2. 👉 **Проактивный план:** (Конкретные действия, включая запуск команд !run, если применимо).
+"""
+    final_output = query_openrouter(synthesis_prompt, system_prompt, model)
+    return final_output or draft
+
 def run_proactive_analysis():
     """Выполняет автономный анализ текущих задач Дениса, почты и сообщений, генерируя умное предложение."""
     # 1. Загружаем задачи Дениса
@@ -163,7 +209,7 @@ def run_proactive_analysis():
 Пиши уверенно, как автономный, преданный делу ИИ-советник Дениса.
 """
     
-    return query_openrouter(prompt, system_prompt)
+    return query_deep_reasoning(prompt, system_prompt)
 
 if __name__ == "__main__":
     print("Testing Proactive Brain...")
