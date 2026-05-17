@@ -27,7 +27,7 @@ def load_openrouter_key():
                 pass
     return None
 
-def query_openrouter(prompt, system_prompt="You are a helpful AI assistant.", model="nvidia/nemotron-4-340b-instruct"):
+def query_openrouter(prompt, system_prompt="You are a helpful AI assistant.", model="nvidia/nemotron-3-super-120b-a12b:free"):
     """Отправляет запрос к OpenRouter API с поддержкой Nemotron или Llama 70B."""
     api_key = load_openrouter_key()
     if not api_key:
@@ -42,12 +42,12 @@ def query_openrouter(prompt, system_prompt="You are a helpful AI assistant.", mo
         "X-Title": "GMC Proactive Brain"
     }
     
-    # Резервные модели, если Nemotron не отвечает или занят
+    # 100% бесплатные модели на OpenRouter с высокой производительностью
     models_to_try = [
         model,
-        "meta-llama/llama-3.1-70b-instruct",
-        "mistralai/pixtral-12b:free",
-        "meta-llama/llama-3-8b-instruct:free"
+        "google/gemma-4-31b-it:free",
+        "deepseek/deepseek-v4-flash:free",
+        "poolside/laguna-m.1:free"
     ]
     
     for selected_model in models_to_try:

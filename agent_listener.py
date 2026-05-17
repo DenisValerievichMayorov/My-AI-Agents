@@ -140,11 +140,12 @@ def query_openrouter_api(prompt):
         "X-Title": "GMC Listener Brain"
     }
     
-    # Список моделей на пробу
+    # Список бесплатных моделей высокой производительности на OpenRouter
     models_to_try = [
-        "meta-llama/llama-3.1-70b-instruct",
-        "mistralai/pixtral-12b:free",
-        "meta-llama/llama-3-8b-instruct:free"
+        "nvidia/nemotron-3-super-120b-a12b:free",
+        "google/gemma-4-31b-it:free",
+        "deepseek/deepseek-v4-flash:free",
+        "poolside/laguna-m.1:free"
     ]
     
     for selected_model in models_to_try:
@@ -315,13 +316,13 @@ def run_agent():
                 ) if is_event else "Ответь кратко по существу, отчитываясь о проделанной работе, без лишних вопросов."
                 prompt = f"Ты ИИ Дениса. {role} Чат:\n{context}"
             
-            # --- Умная маршрутизация: OpenRouter (Llama 70B) vs локальный Ollama vs облачный Gemini ---
+            # --- Умная маршрутизация: OpenRouter (Nemotron-120B) vs локальный Ollama vs облачный Gemini ---
             reply = None
             if not image_path:
-                print("[Brain Routing] Пробую получить ответ от высокопроизводительного OpenRouter (Llama-70B)...")
+                print("[Brain Routing] Пробую получить ответ от высокопроизводительного OpenRouter (Nemotron-120B)...")
                 reply = query_openrouter_api(prompt)
                 if reply:
-                    print("[OpenRouter] Успешный ответ от Llama-70B получен!")
+                    print("[OpenRouter] Успешный ответ от Nemotron-120B получен!")
                 else:
                     print("[Brain Routing] OpenRouter недоступен. Пробую локальный Ollama...")
                     reply = query_local_ollama(prompt)
