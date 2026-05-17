@@ -8,7 +8,7 @@ from geopy.distance import geodesic
 
 # --- Configuration ---
 HOME_ADDRESS = "Engelselei 81, 2140 Antwerpen, Belgium"
-OUTPUT_PDF = "Sync/Werkraport_Report.pdf"
+OUTPUT_PDF = "Werkraports/Werkraport_Report.pdf"
 INPUT_CSV = "tasks_denys.csv"
 
 # --- Static Coordinates Cache (for offline instant computation) ---
