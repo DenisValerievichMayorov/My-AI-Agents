@@ -98,10 +98,9 @@ def main():
                 print(f"[heartbeat] Ошибка при очистке: {e}")
             last_cleanup_time = current_time
             
-        # Динамический интервал мыслей: 120 секунд при активности (тестирование), 1800 секунд при простое
-        is_active = (current_time - last_active_time) < IDLE_TIMEOUT
-        current_thought_interval = 120 if is_active else 1800
-        
+        # Фиксированный интервал мыслей: 120 секунд (тестовый режим)
+        current_thought_interval = 120
+
         if current_time - last_thought_time > current_thought_interval:
             events.append({"type": "timer", "content": "auto"})
             last_thought_time = current_time
