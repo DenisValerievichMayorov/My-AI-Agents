@@ -3,6 +3,7 @@ import json
 import socket
 import datetime
 import urllib.request
+import requests
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DEVICE_NAME = socket.gethostname()
@@ -28,7 +29,7 @@ def load_openrouter_key():
     return None
 
 def query_openrouter(prompt, system_prompt="You are a helpful AI assistant.", model="nvidia/nemotron-3-super-120b-a12b:free"):
-    """Отправляет запрос к OpenRouter API с поддержкой Nemotron или Llama 70B."""
+    """Отправляет запрос к OpenRouter API с поддержкой Nemotron или Llama 70B с использованием requests и строгих таймаутов."""
     api_key = load_openrouter_key()
     if not api_key:
         print("[OpenRouter] API ключ не найден в конфигурациях .hermes/.env")
@@ -44,10 +45,10 @@ def query_openrouter(prompt, system_prompt="You are a helpful AI assistant.", mo
     
     # 100% бесплатные модели на OpenRouter с высокой производительностью
     models_to_try = [
-        model,
-        "google/gemma-4-31b-it:free",
-        "deepseek/deepseek-v4-flash:free",
-        "poolside/laguna-m.1:free"
+        "openrouter/free", # Динамический бесплатный автовыбор лучшей модели - 100% надежно и быстро!
+        model, # nvidia/nemotron-3-super-120b-a12b:free
+        "meta-llama/llama-3-8b-instruct:free",
+        "mistralai/mistral-7b-instruct:free"
     ]
     
     for selected_model in models_to_try:
@@ -61,20 +62,20 @@ def query_openrouter(prompt, system_prompt="You are a helpful AI assistant.", mo
         }
         
         try:
-            req = urllib.request.Request(
-                url,
-                data=json.dumps(payload).encode('utf-8'),
-                headers=headers
-            )
             print(f"[OpenRouter] Запрос модели {selected_model}...")
-            with urllib.request.urlopen(req, timeout=45) as response:
-                res_data = json.loads(response.read().decode('utf-8'))
+            response = requests.post(url, json=payload, headers=headers, timeout=15)
+            if response.status_code == 200:
+                res_data = response.json()
                 choices = res_data.get('choices', [])
                 if choices:
-                    content = choices[0].get('message', {}).get('content', '').strip()
+                    msg = choices[0].get('message', {})
+                    content = msg.get('content') if msg else None
                     if content:
+                        content = content.strip()
                         print(f"[OpenRouter] Успешный ответ от модели: {selected_model}!")
                         return content
+            else:
+                print(f"[OpenRouter] Ошибка {selected_model}: HTTP {response.status_code} - {response.text}")
         except Exception as e:
             print(f"[OpenRouter] Ошибка при запросе {selected_model}: {e}")
             
@@ -84,47 +85,24 @@ def query_deep_reasoning(prompt, system_prompt, model="nvidia/nemotron-3-super-1
     """Реализует System 2 Multi-Turn Self-Correction (глубокие рассуждения с самокритикой)
     для исключения сухой констатации фактов и выработки по-настоящему умных решений."""
     api_key = load_openrouter_key()
-    if not api_key:
-        return None
-        
-    print("[Deep Reasoning] Шаг 1: Формирование первичного хода мыслей и анализа...")
-    draft = query_openrouter(prompt, system_prompt + "\nСделай первичный подробный набросок рассуждений.", model)
-    if not draft:
-        return None
-        
-    print("[Deep Reasoning] Шаг 2: Критическая оценка и самокоррекция (Self-Reflection)...")
-    critique_prompt = f"""
-Проанализируй наш первичный набросок мыслей и решений:
-\"\"\"
-{draft}
-\"\"\"
-
-⚠️ КРИТИЧЕСКОЕ ПРАВИЛО: Наш пользователь Денис крайне недоволен сухой констатацией известных фактов! Он требует настоящих глубоких рассуждений!
-Проведи жесткий самоанализ:
-1. Действительно ли мысли в наброске глубокие? Или это просто повторение того, что пользователь уже написал в чате?
-2. Какие РЕАЛЬНЫЕ практические советы по электрике (для Wilrijk Depot 320, MBG nv), опеке Антона или юридическим вопросам за 2023 год мы можем дать?
-3. Что мы упустили?
-Напиши жесткую критику и план по улучшению мыслей.
-"""
-    critique = query_openrouter(critique_prompt, "Ты — ИИ-Контроллер качества и критик (Quality Controller). Твоя задача — находить поверхностные ответы и требовать глубоких, проактивных мыслей.", model)
-    if not critique:
-        return draft # Возвращаем черновик, если критика не удалась
-        
-    print("[Deep Reasoning] Шаг 3: Синтез финального элитного плана на основе самокритики...")
-    synthesis_prompt = f"""
-На основе первичного наброска:
-{draft}
-
-И критического разбора ошибок:
-{critique}
-
-Сформируй финальный, превосходно оформленный ИИ-отчет для Дениса.
-Отчет ОБЯЗАТЕЛЬНО должен содержать:
-1. 💭 **Ход мыслей (Deep Reasoning):** (По-настоящему умные, глубокие пошаговые рассуждения без констатации фактов. Объясни, *почему* ты предлагаешь именно это, проанализируй риски и выгоды).
-2. 👉 **Проактивный план:** (Конкретные действия, включая запуск команд !run, если применимо).
-"""
-    final_output = query_openrouter(synthesis_prompt, system_prompt, model)
-    return final_output or draft
+def query_deep_reasoning(prompt, system_prompt, model="nvidia/nemotron-3-super-120b-a12b:free"):
+    """Реализует глубокие рассуждения (System 2 CoT) в один проход,
+    исключая сухую констатацию фактов за счет жестко структурированного промпта."""
+    print("[Deep Reasoning] Запуск глубокого Chain-of-Thought анализа...")
+    
+    # Расширяем системный промпт требованием жесткой самокритики и детального анализа
+    reinforced_system_prompt = (
+        system_prompt + "\n\n"
+        "⚠️ ВАЖНОЕ РУКОВОДСТВО ПО РАССУЖДЕНИЯМ (Chain-of-Thought):\n"
+        "В секции '💭 **Ход мыслей:**' ты обязан:\n"
+        "1. Провести жесткую критическую оценку ситуации: не просто перечисляй факты, а анализируй скрытые риски и взаимосвязи (например, почему именно этот объект Wilrijk важен, какие могут быть нюансы с кабелями/схемами, какие последствия судебного спора с юристом).\n"
+        "2. Раскрыть практическую пользу: дай реальные технические или бытовые лайфхаки для Дениса.\n"
+        "3. Мыслить на 3 шага вперед, предлагая готовые решения и автоматизацию (например, через !run) вместо пустых обещаний.\n"
+        "Сначала детально размышляй в '💭 **Ход мыслей:**', затем выдавай готовый, премиально оформленный '👉 **Проактивный план:**'."
+    )
+    
+    output = query_openrouter(prompt, reinforced_system_prompt, model)
+    return output
 
 def run_proactive_analysis():
     """Выполняет автономный анализ текущих задач Дениса, почты и сообщений, генерируя умное предложение."""

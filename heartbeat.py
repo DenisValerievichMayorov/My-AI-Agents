@@ -45,10 +45,10 @@ def post_proactive_thought(event):
 
 def main():
     last_active_time = time.time()
-    last_thought_time = time.time()
+    last_thought_time = 0 # Запуск мысли сразу при старте
     last_cleanup_time = 0 # Запуск очистки сразу при старте
-    THOUGHT_INTERVAL = 1800 # 30 минут
     CLEANUP_INTERVAL = 3600 # 1 час
+    IDLE_TIMEOUT = 1800 # 30 минут
     print(f"[{datetime.datetime.now().strftime('%H:%M:%S')}] 🫀 Сердцебиение запущено...")
     
     while True:
@@ -69,8 +69,11 @@ def main():
                 print(f"[heartbeat] Ошибка при очистке: {e}")
             last_cleanup_time = current_time
             
-        # Регулярная мысль раз в 30 минут
-        if current_time - last_thought_time > THOUGHT_INTERVAL:
+        # Динамический интервал мыслей: 120 секунд при активности (тестирование), 1800 секунд при простое
+        is_active = (current_time - last_active_time) < IDLE_TIMEOUT
+        current_thought_interval = 120 if is_active else 1800
+        
+        if current_time - last_thought_time > current_thought_interval:
             events.append({"type": "timer", "content": "auto"})
             last_thought_time = current_time
 

@@ -5,6 +5,9 @@ import socket
 import urllib.request
 import datetime
 
+# Устанавливаем принудительный таймаут сокетов для предотвращения зависания при медленных ответах OpenRouter
+socket.setdefaulttimeout(35)
+
 # Настройки
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 CHAT_FILE = os.path.join(BASE_DIR, 'ai_chat_room.txt')
@@ -119,8 +122,7 @@ def query_local_ollama(prompt):
 
 def query_openrouter_api(prompt):
     """Отправляет запрос к OpenRouter API с поддержкой Nemotron/Llama 70B (Hermes API)."""
-    import json
-    import urllib.request
+    import requests
     
     # Пытаемся импортировать ключ
     try:
@@ -142,10 +144,10 @@ def query_openrouter_api(prompt):
     
     # Список бесплатных моделей высокой производительности на OpenRouter
     models_to_try = [
+        "openrouter/free", # Динамический бесплатный автовыбор лучшей модели - 100% надежно и быстро!
         "nvidia/nemotron-3-super-120b-a12b:free",
-        "google/gemma-4-31b-it:free",
-        "deepseek/deepseek-v4-flash:free",
-        "poolside/laguna-m.1:free"
+        "meta-llama/llama-3-8b-instruct:free",
+        "mistralai/mistral-7b-instruct:free"
     ]
     
     for selected_model in models_to_try:
@@ -173,19 +175,20 @@ def query_openrouter_api(prompt):
             "temperature": 0.5
         }
         try:
-            req = urllib.request.Request(
-                url,
-                data=json.dumps(payload).encode('utf-8'),
-                headers=headers
-            )
-            with urllib.request.urlopen(req, timeout=30) as response:
-                res_data = json.loads(response.read().decode('utf-8'))
+            print(f"[OpenRouter] Запрос модели {selected_model}...")
+            response = requests.post(url, json=payload, headers=headers, timeout=15)
+            if response.status_code == 200:
+                res_data = response.json()
                 choices = res_data.get('choices', [])
                 if choices:
-                    content = choices[0].get('message', {}).get('content', '').strip()
+                    msg = choices[0].get('message', {})
+                    content = msg.get('content') if msg else None
                     if content:
+                        content = content.strip()
                         print(f"[OpenRouter] Успешный ответ от модели {selected_model}")
                         return content
+            else:
+                print(f"[OpenRouter] Ошибка {selected_model}: HTTP {response.status_code} - {response.text}")
         except Exception as e:
             print(f"[OpenRouter] Ошибка {selected_model}: {e}")
     return None

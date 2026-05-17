@@ -23,8 +23,19 @@ def check_sync():
         except Exception: pass
     return []
 
+_last_mail_check = 0
+_cached_mail_events = []
+
 def check_mail():
-    """Проверяет почту и возвращает заголовки новых писем (только на ПК)."""
+    """Проверяет почту и возвращает заголовки новых писем (только на ПК) с кэшированием на 5 минут."""
+    global _last_mail_check, _cached_mail_events
+    now_ts = datetime.datetime.now().timestamp()
+    if now_ts - _last_mail_check < 300:
+        return _cached_mail_events
+        
+    _last_mail_check = now_ts
+    _cached_mail_events = []
+    
     script_path = os.path.join(BASE_DIR, 'Legacy', 'get_gmail.py')
     if os.path.exists(script_path) and os.name == 'nt':
         try:
@@ -41,10 +52,10 @@ def check_mail():
                         if "Тема:" in line:
                             subject = line.replace("Тема:", "").strip()
                             break
-                    return [{"type": "mail", "content": subject}]
+                    _cached_mail_events = [{"type": "mail", "content": subject}]
         except Exception:
             pass
-    return []
+    return _cached_mail_events
 
 def check_photos():
     """Проверяет новые фото на Android."""
