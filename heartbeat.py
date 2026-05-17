@@ -14,23 +14,24 @@ DEVICE_NAME = socket.gethostname()
 def post_proactive_thought(event):
     """Агент сам пишет в чат, когда видит событие или наступает время подумать."""
     msg = ""
+    timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     if event['type'] == 'mail':
-        msg = f"[System Event]: На ПК получено письмо: '{event['content']}'. Агенты, обсудите, нужно ли Денису на это реагировать?"
+        msg = f"[{timestamp}] [System Event]: На ПК получено письмо: '{event['content']}'. Агенты, обсудите, нужно ли Денису на это реагировать?"
     elif event['type'] == 'photo':
-        msg = f"[System Event]: На телефоне замечено новое фото: {os.path.basename(event['content'])}. Агент на телефоне, опиши, что там, и предложи задачу."
+        msg = f"[{timestamp}] [System Event]: На телефоне замечено новое фото: {os.path.basename(event['content'])}. Агент на телефоне, опиши, что там, и предложи задачу."
     elif event['type'] == 'whatsapp':
-        msg = f"[System Event]: Новое сообщение в WhatsApp: '{event['content']}'. Агенты, проанализируйте и предложите Денису ответ."
+        msg = f"[{timestamp}] [System Event]: Новое сообщение в WhatsApp: '{event['content']}'. Агенты, проанализируйте и предложите Денису ответ."
     elif event['type'] == 'timer':
         print("[heartbeat] Запускаю автономный мыслительный цикл Proactive Brain...")
         try:
             import reasoning_engine
             report = reasoning_engine.run_proactive_analysis()
             if report:
-                msg = f"[GMC Proactive Brain]:\n{report}"
+                msg = f"[{timestamp}] [GMC Proactive Brain]:\n{report}"
             else:
-                msg = "[System Event]: Регулярная проверка. Агенты, посмотрите календарь и почту Дениса (!google). Есть ли что-то важное на завтра?"
+                msg = f"[{timestamp}] [System Event]: Регулярная проверка. Агенты, посмотрите календарь и почту Дениса (!google). Есть ли что-то важное на завтра?"
         except Exception as e:
-            msg = f"[System Event]: Регулярная проверка. Ошибка Proactive Brain: {e}"
+            msg = f"[{timestamp}] [System Event]: Регулярная проверка. Ошибка Proactive Brain: {e}"
     
     if msg:
         # Проверяем на дубликаты в чате, чтобы избежать дублирования при работе на нескольких узлах
@@ -62,7 +63,8 @@ def main():
                 import cleaner
                 stats = cleaner.run_garbage_collector()
                 if stats['deleted_files'] > 0 or stats['killed_chromes'] > 0:
-                    cleanup_msg = f"[System Alert]: 🧹 Выполнена автоматическая оптимизация: удалено {stats['deleted_files']} файлов конфликтов ({stats['bytes_saved_kb']:.2f} KB), уничтожено {stats['killed_chromes']} зависших процессов Chrome. Память и папки чисты!"
+                    timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                    cleanup_msg = f"[{timestamp}] [System Alert]: 🧹 Выполнена автоматическая оптимизация: удалено {stats['deleted_files']} файлов конфликтов ({stats['bytes_saved_kb']:.2f} KB), уничтожено {stats['killed_chromes']} зависших процессов Chrome. Память и папки чисты!"
                     with open(CHAT_FILE, 'a', encoding='utf-8') as f:
                         f.write(f"\n{cleanup_msg}\n")
             except Exception as e:

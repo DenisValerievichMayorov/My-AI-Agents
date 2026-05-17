@@ -109,7 +109,14 @@ client.on('message_create', async msg => {
             console.log(`🤖 Triggering AI response for Denis in chat: ${chat.name}...`);
             activeDenisChatId = chat.id._serialized; // Запоминаем ID чата, куда нужно ответить
             const mediaPrompt = filename ? ` [Media: ${filename}]` : "";
-            const eventLine = `\n[System Event]: WhatsApp от Дениса: ${msg.body}${mediaPrompt} (Пожалуйста, ответь Денису в WhatsApp. Твой ответ должен начинаться строго с '[WhatsApp Reply]: ')\n`;
+            const now = new Date();
+            const timestamp = now.getFullYear() + '-' + 
+                              String(now.getMonth() + 1).padStart(2, '0') + '-' + 
+                              String(now.getDate()).padStart(2, '0') + ' ' + 
+                              String(now.getHours()).padStart(2, '0') + ':' + 
+                              String(now.getMinutes()).padStart(2, '0') + ':' + 
+                              String(now.getSeconds()).padStart(2, '0');
+            const eventLine = `\n[${timestamp}] [System Event]: WhatsApp от Дениса: ${msg.body}${mediaPrompt} (Пожалуйста, ответь Денису в WhatsApp. Твой ответ должен начинаться строго с '[WhatsApp Reply]: ')\n`;
             fs.appendFileSync(CHAT_FILE, eventLine);
         }
     } catch (e) {

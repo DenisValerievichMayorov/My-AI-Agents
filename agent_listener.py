@@ -448,7 +448,8 @@ def run_agent():
                 time.sleep(20)
                 continue
             
-            new_msg = f"[{DEVICE_NAME}]: {reply}\n"
+            timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            new_msg = f"[{timestamp}] [{DEVICE_NAME}]: {reply}\n"
             with open(CHAT_FILE, 'a', encoding='utf-8') as f:
                 f.write(new_msg)
             print("Отправлено:", reply)
