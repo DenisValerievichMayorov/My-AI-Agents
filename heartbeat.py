@@ -34,7 +34,7 @@ def post_proactive_thought(event):
             if report:
                 msg = f"[{timestamp}] [GMC Proactive Brain]:\n{report}"
             else:
-                msg = f"[{timestamp}] [System Event]: Регулярная проверка. Агенты, посмотрите календарь и почту Дениса (!google). Есть ли что-то важное на завтра?"
+                msg = f"[{timestamp}] [System Event]: Регулярная проверка. Агенты, проанализируйте текущую переписку, почту и календарь Дениса (!google). Чем мы можем помочь ему прямо сейчас, в данный момент, не забывая о планах на будущее?"
         except Exception as e:
             msg = f"[{timestamp}] [System Event]: Регулярная проверка. Ошибка Proactive Brain: {e}"
     
