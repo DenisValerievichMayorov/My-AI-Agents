@@ -27,34 +27,74 @@ _last_mail_check = 0
 _cached_mail_events = []
 
 def check_mail():
-    """Проверяет почту и возвращает заголовки новых писем (только на ПК) с кэшированием на 5 минут."""
+    """Проверяет почту на новые непрочитанные сообщения с кэшированием на 45 секунд."""
     global _last_mail_check, _cached_mail_events
     now_ts = datetime.datetime.now().timestamp()
-    if now_ts - _last_mail_check < 300:
+    if now_ts - _last_mail_check < 45:
         return _cached_mail_events
         
     _last_mail_check = now_ts
     _cached_mail_events = []
     
-    script_path = os.path.join(BASE_DIR, 'Legacy', 'get_gmail.py')
-    if os.path.exists(script_path) and os.name == 'nt':
-        try:
-            # Используем абсолютный путь к python
-            py = "py" if os.name == 'nt' else "python3"
-            result = subprocess.run([py, script_path], capture_output=True, text=True, timeout=30)
-            if result.stdout and "Найдено писем:" in result.stdout:
-                count_line = [l for l in result.stdout.split('\n') if "Найдено писем:" in l][0]
-                count = int(count_line.split(":")[-1].strip())
-                if count > 0:
-                    # Парсим заголовок (упрощенно)
-                    subject = "Новое письмо"
-                    for line in result.stdout.split('\n'):
-                        if "Тема:" in line:
-                            subject = line.replace("Тема:", "").strip()
-                            break
-                    _cached_mail_events = [{"type": "mail", "content": subject}]
-        except Exception:
-            pass
+    # 1. Проверяем новые непрочитанные через Gmail API (google_tool)
+    try:
+        import google_tool
+        creds = google_tool.get_creds()
+        if creds:
+            from googleapiclient.discovery import build
+            service = build('gmail', 'v1', credentials=creds)
+            results = service.users().messages().list(userId='me', q='is:unread', maxResults=5).execute()
+            messages = results.get('messages', [])
+            
+            notified_file = os.path.join(BASE_DIR, 'logs', 'notified_emails.txt')
+            os.makedirs(os.path.dirname(notified_file), exist_ok=True)
+            notified_ids = set()
+            if os.path.exists(notified_file):
+                with open(notified_file, 'r', encoding='utf-8') as nf:
+                    notified_ids = set(line.strip() for line in nf if line.strip())
+
+            new_emails = []
+            for m in messages:
+                m_id = m['id']
+                if m_id not in notified_ids:
+                    msg_detail = service.users().messages().get(userId='me', id=m_id).execute()
+                    headers = msg_detail.get('payload', {}).get('headers', [])
+                    subject = next((h['value'] for h in headers if h['name'].lower() == 'subject'), 'Без темы')
+                    from_ = next((h['value'] for h in headers if h['name'].lower() == 'from'), 'Неизвестный отправитель')
+                    
+                    new_emails.append(m_id)
+                    _cached_mail_events.append({
+                        "type": "mail",
+                        "content": f"От: {from_} | Тема: {subject}"
+                    })
+            
+            if new_emails:
+                with open(notified_file, 'a', encoding='utf-8') as nf:
+                    for m_id in new_emails:
+                        nf.write(f"{m_id}\n")
+    except Exception as e:
+        print(f"[sensors] Ошибка проверки Gmail API: {e}")
+
+    # 2. Если Gmail API недоступен, пробуем резервный IMAP поиск писем от ABVV/FGTB
+    if not _cached_mail_events:
+        script_path = os.path.join(BASE_DIR, 'Legacy', 'get_gmail.py')
+        if os.path.exists(script_path) and os.name == 'nt':
+            try:
+                py = "py" if os.name == 'nt' else "python3"
+                result = subprocess.run([py, script_path], capture_output=True, text=True, timeout=20)
+                if result.stdout and "Найдено писем:" in result.stdout:
+                    count_line = [l for l in result.stdout.split('\n') if "Найдено писем:" in l][0]
+                    count = int(count_line.split(":")[-1].strip())
+                    if count > 0:
+                        subject = "Новое письмо ABVV/FGTB"
+                        for line in result.stdout.split('\n'):
+                            if "Тема:" in line:
+                                subject = line.replace("Тема:", "").strip()
+                                break
+                        _cached_mail_events = [{"type": "mail", "content": f"ABVV: {subject}"}]
+            except Exception:
+                pass
+                
     return _cached_mail_events
 
 def check_photos():

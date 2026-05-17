@@ -105,8 +105,8 @@ client.on('message_create', async msg => {
             return;
         }
 
-        if (isSelfChat && isMe && !isBotReply && msg.body.trim()) {
-            console.log(`🤖 Triggering AI response for Denis in chat: ${chat.name}...`);
+        if (!chat.isGroup && !isBotReply && msg.body.trim()) {
+            console.log(`🤖 Triggering AI response/monitoring in chat: ${chat.name}...`);
             activeDenisChatId = chat.id._serialized; // Запоминаем ID чата, куда нужно ответить
             const mediaPrompt = filename ? ` [Media: ${filename}]` : "";
             const now = new Date();
@@ -116,7 +116,13 @@ client.on('message_create', async msg => {
                               String(now.getHours()).padStart(2, '0') + ':' + 
                               String(now.getMinutes()).padStart(2, '0') + ':' + 
                               String(now.getSeconds()).padStart(2, '0');
-            const eventLine = `\n[${timestamp}] [System Event]: WhatsApp от Дениса: ${msg.body}${mediaPrompt} (Пожалуйста, ответь Денису в WhatsApp. Твой ответ должен начинаться строго с '[WhatsApp Reply]: ')\n`;
+                              
+            let eventLine = "";
+            if (isMe) {
+                eventLine = `\n[${timestamp}] [System Event]: WhatsApp от Дениса: ${msg.body}${mediaPrompt} (Пожалуйста, ответь Денису в WhatsApp. Твой ответ должен начинаться строго с '[WhatsApp Reply]: ')\n`;
+            } else {
+                eventLine = `\n[${timestamp}] [System Event]: Новое сообщение в WhatsApp от ${sender} (чат ${chat.name}): ${msg.body}${mediaPrompt} (Пожалуйста, проанализируй сообщение в контексте всей переписки. Если оно требует внимания Дениса, самостоятельно подготовь нужную информацию, проверь календарь или документы через !google/!run, и составь краткое проактивное уведомление для Дениса. Оно должно начинаться строго с '[WhatsApp Reply]: [ИИ Уведомление]: ')\n`;
+            }
             fs.appendFileSync(CHAT_FILE, eventLine);
         }
     } catch (e) {

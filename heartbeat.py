@@ -6,7 +6,7 @@ from sensors import get_all_events
 
 # Настройки
 ACTIVE_INTERVAL = 10
-INACTIVE_INTERVAL = 900
+INACTIVE_INTERVAL = 45
 IDLE_TIMEOUT = 1800
 CHAT_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'ai_chat_room.txt')
 DEVICE_NAME = socket.gethostname()
