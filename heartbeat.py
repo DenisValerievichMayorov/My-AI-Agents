@@ -22,6 +22,11 @@ def post_proactive_thought(event):
     elif event['type'] == 'whatsapp':
         msg = f"[{timestamp}] [System Event]: Новое сообщение в WhatsApp: '{event['content']}'. Агенты, проанализируйте и предложите Денису ответ."
     elif event['type'] == 'timer':
+        is_pc = "desktop" in DEVICE_NAME.lower()
+        if not is_pc:
+            print("[heartbeat] Автономный цикл Proactive Brain пропускается на мобильном устройстве для исключения конфликтов синхронизации.")
+            return
+            
         print("[heartbeat] Запускаю автономный мыслительный цикл Proactive Brain...")
         try:
             import reasoning_engine

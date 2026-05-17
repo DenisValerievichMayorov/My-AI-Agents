@@ -4,6 +4,7 @@ import subprocess
 import socket
 import urllib.request
 import datetime
+import re
 
 # Устанавливаем принудительный таймаут сокетов для предотвращения зависания при медленных ответах OpenRouter
 socket.setdefaulttimeout(35)
@@ -225,15 +226,22 @@ def run_agent():
         last_sender = None
         for line in reversed(lines):
             line_str = line.strip()
-            if line_str.startswith("[") and "]:" in line_str:
-                last_sender = line_str.split("]:", 1)[0] + "]:"
-                break
+            if "]:" in line_str:
+                header = line_str.split("]:", 1)[0]
+                brackets = re.findall(r'\[([^\]]+)\]', header)
+                if brackets:
+                    last_sender = brackets[-1]
+                    break
                 
         if last_sender:
-            clean_sender = last_sender.strip("[]: ").lower()
+            clean_sender = last_sender.strip().lower()
+            # Если это наше собственное сообщение, мы его игнорируем
+            if clean_sender == DEVICE_NAME.lower():
+                time.sleep(5); continue
+                
             # Если отправитель — другой ИИ-агент (не Денис, не WhatsApp и не системное оповещение),
-            # мы полностью игнорируем сообщение, чтобы исключить пинг-понг теннис между устройствами.
-            if "denis" not in clean_sender and "денис" not in clean_sender and "system alert" not in clean_sender:
+            # мы пропускаем обработку, чтобы не перебивать его и исключить бесконечный пинг-понг.
+            if "denis" not in clean_sender and "денис" not in clean_sender and "system" not in clean_sender and "event" not in clean_sender:
                 time.sleep(5); continue
             
         print(f"[{DEVICE_NAME}] Анализирую входящее сообщение...")
