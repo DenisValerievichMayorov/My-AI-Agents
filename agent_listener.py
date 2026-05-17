@@ -215,6 +215,14 @@ def run_agent():
         if reply:
             reply = reply.strip()
             
+            # Если это был WhatsApp запрос от Дениса, принудительно гарантируем наличие префикса [WhatsApp Reply]:
+            if "whatsapp от дениса:" in last_line.lower():
+                if not reply.startswith("[WhatsApp Reply]:"):
+                    clean_reply = reply
+                    if reply.startswith(f"[{DEVICE_NAME}]:"):
+                        clean_reply = reply.split(f"[{DEVICE_NAME}]:")[-1].strip()
+                    reply = f"[WhatsApp Reply]: {clean_reply}"
+            
             # --- Улучшенная дедупликация и защита от "тенниса" ---
             if not reply or (len(reply) < 5 and not reply.startswith("!")):
                 print("Reply too short, skipping.")
