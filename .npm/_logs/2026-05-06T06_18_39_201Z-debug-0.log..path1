@@ -1,0 +1,33 @@
+0 verbose cli /data/data/com.termux/files/usr/bin/node /data/data/com.termux/files/usr/bin/npm
+1 info using npm@11.13.0
+2 info using node@v24.14.1
+3 silly config load:file:/data/data/com.termux/files/usr/lib/node_modules/npm/npmrc
+4 silly config load:file:/data/data/com.termux/files/home/.npmrc
+5 silly config load:file:/data/data/com.termux/files/usr/etc/npmrc
+6 verbose title npm install @mmmbuto/codex-cli-termux@latest
+7 verbose argv "install" "--global" "@mmmbuto/codex-cli-termux@latest"
+8 verbose logfile logs-max:10 dir:/data/data/com.termux/files/home/.npm/_logs/2026-05-06T06_18_39_201Z-
+9 verbose logfile /data/data/com.termux/files/home/.npm/_logs/2026-05-06T06_18_39_201Z-debug-0.log
+10 silly packumentCache heap:1174405120 maxSize:293601280 maxEntrySize:146800640
+11 silly logfile start cleaning logs, removing 1 files
+12 silly logfile done cleaning log files
+13 silly packumentCache corgi:https://registry.npmjs.org/@mmmbuto%2fcodex-cli-termux cache-miss
+14 http fetch GET 200 https://registry.npmjs.org/@mmmbuto%2fcodex-cli-termux 910ms (cache miss)
+15 silly packumentCache corgi:https://registry.npmjs.org/@mmmbuto%2fcodex-cli-termux set size:undefined disposed:false
+16 silly idealTree buildDeps
+17 silly fetch manifest @mmmbuto/codex-cli-termux@0.128.0-termux
+18 silly packumentCache full:https://registry.npmjs.org/@mmmbuto%2fcodex-cli-termux cache-miss
+19 http fetch GET 200 https://registry.npmjs.org/@mmmbuto%2fcodex-cli-termux 536ms (cache miss)
+20 silly packumentCache full:https://registry.npmjs.org/@mmmbuto%2fcodex-cli-termux set size:undefined disposed:false
+21 silly placeDep ROOT @mmmbuto/codex-cli-termux@0.128.0-termux OK for:  want: 0.128.0-termux
+22 silly reify moves {}
+23 http cache @mmmbuto/codex-cli-termux@https://registry.npmjs.org/@mmmbuto/codex-cli-termux/-/codex-cli-termux-0.128.0-termux.tgz 0ms (cache hit)
+24 silly tarball no local data for @mmmbuto/codex-cli-termux@https://registry.npmjs.org/@mmmbuto/codex-cli-termux/-/codex-cli-termux-0.128.0-termux.tgz. Extracting by manifest.
+25 http fetch GET 200 https://registry.npmjs.org/@mmmbuto/codex-cli-termux/-/codex-cli-termux-0.128.0-termux.tgz 11411ms (cache miss)
+26 silly ADD node_modules/@mmmbuto/codex-cli-termux
+27 verbose cwd /data/data/com.termux/files/home
+28 verbose os Linux 5.10.233-android12-9-00008-gf5ac1bdc50ed-ab13743812
+29 verbose node v24.14.1
+30 verbose npm  v11.13.0
+31 verbose exit 0
+32 info ok

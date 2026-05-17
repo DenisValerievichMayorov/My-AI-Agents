@@ -20,6 +20,10 @@
 - **Sync Automation:** Created `auto-sync.sh` on Chromebook and updated `INSTRUCTIONS_WINDOWS.md`.
 - **Chromebook Report:** Updated with sync automation status.
 - **OCR Werkraport:** Completed. Work schedule for Week 21 (May 18-24) extracted.
+- **Unify Skills:** Successfully merged `~/.gemini/skills` and `~/Sync/.gemini/skills`. Symlink created in Termux.
+- **Antigravity CLI:** Confirmed `https://antigravity.google/download/linux/antigravity.deb` is 404. Local deb is corrupted. Re-download pending correct URL.
+- **Antigravity Diagnosis:** Identified `Setup/antigravity_arm64.deb` as a corrupted HTML file. Need valid binary.
+- **Skill Conflict Diagnosis:** Confirmed duplicate skills in `~/.gemini/skills` and `~/Sync/.gemini/skills` causing errors.
 
 ### Step 3: Cleanup `ai_chat_room.txt` [DONE]
 - Remove the repetitive loops of duplicate messages from `ai_chat_room.txt`, keeping only the system events and the last relevant status.
@@ -29,16 +33,21 @@
 - Test SSH connection to `Chromebook` (`100.106.187.105:22` as `denisvalerievichmayorov1`).
 
 ### Step 5: Configure and Report Remote Nodes
-- **Termux Phone:**
-  - Verify tailscale status.
-  - Setup SSH authorized keys using the public key.
-  - Verify if `antigravity-cli` or similar service is installed/demoniized.
-  - Write `Sync/Termux_Report.md` with status.
-- **Chromebook:**
+- **Termux Phone:** [IN PROGRESS]
+  - Verify tailscale status. (CLI missing)
+  - Setup SSH authorized keys using the public key. [DONE]
+  - Re-download and install valid `antigravity-cli`. [TODO]
+  - Write `Sync/Termux_Report.md` with status. [UPDATED]
+- **Chromebook:** [IN PROGRESS]
   - Verify `sshd` config on `tailscale0`.
   - Setup SSH authorized keys using `chromebook_ssh_key.pub`.
+  - Resolve Skill Conflicts: Unify `~/.gemini/skills` with `~/Sync/.gemini/skills`. [TODO]
   - Check `rclone` Google Drive sync.
   - Write `Sync/Chromebook_Report.md`.
+
+### New Step 6: System Optimization
+- **Unify Skills:** Move all skills to `~/Sync/.gemini/skills` and create symlinks in `~/.gemini/skills` to ensure synchronization and avoid duplication errors.
+- **Fix Antigravity:** Locate or request the correct source for `antigravity-cli` for arm64 (Termux).
 
 ## Self-Healing Tools
 - Run `py agent_listener.py` diagnostics locally and verify no syntax or runtime errors occur.

@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "text": "Приложение запущено!",
+    "completed": false,
+    "reminderTime": null,
+    "leadTimeMinutes": 0,
+    "notified": false
+  },
+  {
+    "id": 2,
+    "text": "найти блютуз наушники",
+    "completed": false,
+    "reminderTime": null,
+    "leadTimeMinutes": 0,
+    "notified": false
+  },
+  {
+    "id": 3,
+    "text": "подстричься",
+    "completed": false,
+    "reminderTime": null,
+    "leadTimeMinutes": 0,
+    "notified": false
+  }
+]

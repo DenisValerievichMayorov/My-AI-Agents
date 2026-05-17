@@ -1,0 +1,48 @@
+0 verbose cli /data/data/com.termux/files/usr/bin/node /data/data/com.termux/files/usr/bin/npm
+1 info using npm@11.13.0
+2 info using node@v24.14.1
+3 silly config load:file:/data/data/com.termux/files/usr/lib/node_modules/npm/npmrc
+4 silly config load:file:/data/data/com.termux/files/home/.npmrc
+5 silly config load:file:/data/data/com.termux/files/usr/etc/npmrc
+6 verbose title npm install @mmmbuto/codex-cli-termux@latest
+7 verbose argv "install" "--global" "@mmmbuto/codex-cli-termux@latest"
+8 verbose logfile logs-max:10 dir:/data/data/com.termux/files/home/.npm/_logs/2026-05-14T07_29_00_850Z-
+9 verbose logfile /data/data/com.termux/files/home/.npm/_logs/2026-05-14T07_29_00_850Z-debug-0.log
+10 silly packumentCache heap:1174405120 maxSize:293601280 maxEntrySize:146800640
+11 silly logfile start cleaning logs, removing 1 files
+12 silly logfile done cleaning log files
+13 silly packumentCache corgi:https://registry.npmjs.org/@mmmbuto%2fcodex-cli-termux cache-miss
+14 http fetch GET 200 https://registry.npmjs.org/npm 250ms
+15 http fetch GET 200 https://registry.npmjs.org/@mmmbuto%2fcodex-cli-termux 764ms (cache updated)
+16 silly packumentCache corgi:https://registry.npmjs.org/@mmmbuto%2fcodex-cli-termux set size:undefined disposed:false
+17 silly idealTree buildDeps
+18 silly fetch manifest @mmmbuto/codex-cli-termux@0.130.0
+19 silly packumentCache full:https://registry.npmjs.org/@mmmbuto%2fcodex-cli-termux cache-miss
+20 http fetch GET 200 https://registry.npmjs.org/@mmmbuto%2fcodex-cli-termux 584ms (cache updated)
+21 silly packumentCache full:https://registry.npmjs.org/@mmmbuto%2fcodex-cli-termux set size:undefined disposed:false
+22 silly placeDep ROOT @mmmbuto/codex-cli-termux@0.130.0 OK for:  want: 0.130.0
+23 silly reify mark retired [
+23 silly reify   '/data/data/com.termux/files/usr/lib/node_modules/@mmmbuto/codex-cli-termux',
+23 silly reify   '/data/data/com.termux/files/usr/bin/codex',
+23 silly reify   '/data/data/com.termux/files/usr/bin/codex-exec'
+23 silly reify ]
+24 silly reify moves {
+24 silly reify   '/data/data/com.termux/files/usr/lib/node_modules/@mmmbuto/codex-cli-termux': '/data/data/com.termux/files/usr/lib/node_modules/@mmmbuto/.codex-cli-termux-03tqUBvy',
+24 silly reify   '/data/data/com.termux/files/usr/bin/codex': '/data/data/com.termux/files/usr/bin/.codex-VTDnE6BM',
+24 silly reify   '/data/data/com.termux/files/usr/bin/codex-exec': '/data/data/com.termux/files/usr/bin/.codex-exec-TKRvbaq3'
+24 silly reify }
+25 http cache @mmmbuto/codex-cli-termux@https://registry.npmjs.org/@mmmbuto/codex-cli-termux/-/codex-cli-termux-0.130.0.tgz 0ms (cache hit)
+26 silly tarball no local data for @mmmbuto/codex-cli-termux@https://registry.npmjs.org/@mmmbuto/codex-cli-termux/-/codex-cli-termux-0.130.0.tgz. Extracting by manifest.
+27 http fetch GET 200 https://registry.npmjs.org/@mmmbuto/codex-cli-termux/-/codex-cli-termux-0.130.0.tgz 9293ms (cache miss)
+28 silly CHANGE node_modules/@mmmbuto/codex-cli-termux
+29 verbose cwd /data/data/com.termux/files/home
+30 verbose os Linux 5.10.233-android12-9-00008-gf5ac1bdc50ed-ab13743812
+31 verbose node v24.14.1
+32 verbose npm  v11.13.0
+33 notice
+33 notice New [33mminor[39m version of npm available! [33m11.13.0[39m -> [34m11.14.1[39m
+33 notice Changelog: [34mhttps://github.com/npm/cli/releases/tag/v11.14.1[39m
+33 notice To update run: [4mnpm install -g npm@11.14.1[24m
+33 notice  { force: true, Symbol(proc-log.meta): true }
+34 verbose exit 0
+35 info ok

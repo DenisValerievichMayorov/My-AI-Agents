@@ -20,8 +20,10 @@ def main():
     
     home_address = "Willem Gijsselsstraat 16, 2050 Antwerpen, Belgium"
     projects = [
-        {"name": "Rumst (Bostoen)", "address": "Veerstraat, 2840 Rumst, Belgium"},
-        {"name": "LA Esploro (Wilrijk)", "address": "Boombekelaan, 2610 Wilrijk, Belgium"}
+        {"name": "Rumst (Bostoen)", "address": "Vissersstraat 84, 2840 Rumst, Belgium"},
+        {"name": "Nijlen (Netceed)", "address": "Heuvelstraat 72, 2560 Nijlen, Belgium"},
+        {"name": "Wilrijk (MBG nv)", "address": "Laarstraat 16, 2610 Wilrijk, Belgium"},
+        {"name": "Wilrijk (LA Esploro)", "address": "Boombekelaan, 2660 Hoboken, Belgium"}
     ]
     
     print(f"Geocoding home address: {home_address}")

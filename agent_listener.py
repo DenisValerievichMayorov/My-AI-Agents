@@ -51,7 +51,7 @@ def register_complaint(action, error_msg):
 """
     with open(complaints_file, 'a', encoding='utf-8') as f:
         f.write(complaint_entry)
-    print(f"⚠️ Жалоба на '{action}' успешно зарегистрирована в AGENTS_COMPLAINTS.md")
+    print(f"⚠️ Жалоба на '{action}' успешно зарегистрирована in AGENTS_COMPLAINTS.md")
 
 def get_weather():
     try:
@@ -60,8 +60,65 @@ def get_weather():
             return response.read().decode('utf-8').strip()
     except Exception: return "Нет данных о погоде."
 
+def query_local_ollama(prompt):
+    """Отправляет запрос в локальную модель Ollama (предпочитая Gemma), если она запущена."""
+    import urllib.request
+    import json
+    
+    # Список хостов для проверки:
+    # Если мы не на главном ПК (DESKTOP-85D3NJI), пробуем сначала достучаться до ПК по Tailscale IP
+    hosts = ["http://localhost:11434"]
+    if "desktop" not in DEVICE_NAME.lower():
+        hosts.insert(0, "http://100.72.214.118:11434") # Tailscale IP главного Windows ПК
+        
+    for host in hosts:
+        try:
+            # 1. Проверяем доступность API и список моделей
+            req = urllib.request.urlopen(f"{host}/api/tags", timeout=2)
+            data = json.loads(req.read().decode())
+            models = [m['name'] for m in data.get('models', [])]
+            if not models:
+                continue
+                
+            # 2. Выбираем лучшую модель из доступных (предпочитаем gemma)
+            selected_model = None
+            for preferred in ["gemma2:2b", "gemma2", "gemma", "llama3.2", "qwen2.5-coder", "llama3"]:
+                for m in models:
+                    if m.lower().startswith(preferred):
+                        selected_model = m
+                        break
+                if selected_model:
+                    break
+            
+            if not selected_model:
+                selected_model = models[0] # берем первую попавшуюся
+                
+            print(f"[Ollama] Использую модель: {selected_model} на хосте {host}")
+            
+            # 3. Делаем запрос к /api/generate
+            payload = {
+                "model": selected_model,
+                "prompt": prompt,
+                "stream": False
+            }
+            
+            req_post = urllib.request.Request(
+                f"{host}/api/generate",
+                data=json.dumps(payload).encode('utf-8'),
+                headers={'Content-Type': 'application/json'}
+            )
+            
+            with urllib.request.urlopen(req_post, timeout=30) as response:
+                res_data = json.loads(response.read().decode('utf-8'))
+                return res_data.get('response', '').strip()
+                
+        except Exception as e:
+            print(f"[Ollama] Хост {host} недоступен или произошла ошибка: {e}")
+            
+    return None
+
 def run_agent():
-    print(f"🚀 Агент [{DEVICE_NAME}] запущен (Subscription Mode)...")
+    print(f"🚀 Агент [{DEVICE_NAME}] запущен (Dual Mode: Ollama/Gemini)...")
     
     while True:
         if not os.path.exists(CHAT_FILE):
@@ -82,9 +139,13 @@ def run_agent():
         if last_line.startswith(f"[{DEVICE_NAME}]:"):
             time.sleep(10); continue
             
-        print(f"[{DEVICE_NAME}] Думаю через Gemini CLI (Subscription)...")
+        print(f"[{DEVICE_NAME}] Анализирую входящее сообщение...")
         
         reply = ""
+        
+        # ──────────────────────────────────────────────────────────────────────
+        # Ветвь 1: Запуск скрипта
+        # ──────────────────────────────────────────────────────────────────────
         if "!run" in last_line.lower():
             after_run = last_line.lower().split("!run")[-1].strip()
             script_name = after_run.split()[0].rstrip(',.') if after_run.split() else ""
@@ -101,9 +162,15 @@ def run_agent():
             else:
                 reply = f"Файл {script_name} не найден."
         
+        # ──────────────────────────────────────────────────────────────────────
+        # Ветвь 2: Запрос погоды
+        # ──────────────────────────────────────────────────────────────────────
         elif "!погода" in last_line.lower():
             reply = f"Погода: {get_weather()}"
             
+        # ──────────────────────────────────────────────────────────────────────
+        # Ветвь 3: Запрос к Google API
+        # ──────────────────────────────────────────────────────────────────────
         elif "!google" in last_line.lower():
             print(f"Выполняю запрос к Google API...")
             try:
@@ -122,7 +189,6 @@ def run_agent():
                 else:
                     reply = "Доступные сервисы: calendar, drive, mail, photo."
                 
-                # Если в ответе содержится признак ошибки от самого API
                 if "ошибка" in reply.lower() or "error" in reply.lower() or "not authorized" in reply.lower():
                     register_complaint(f"!google {service}", reply)
                     reply = f"[WhatsApp Reply]: ⚠️ [ИИ Ошибка на {DEVICE_NAME}]: Сбой при обращении к Google {service}. Подробности записаны в AGENTS_COMPLAINTS.md. Antigravity, помоги!"
@@ -131,7 +197,16 @@ def run_agent():
                 register_complaint("!google command execution", err)
                 reply = f"[WhatsApp Reply]: ⚠️ [ИИ Ошибка на {DEVICE_NAME}]: Сбой выполнения google-команды. Жалоба записана в AGENTS_COMPLAINTS.md. Antigravity, помоги!\n\nОшибка:\n{err}"
             
+        # ──────────────────────────────────────────────────────────────────────
+        # Ветвь 4: Обычная беседа (Поддержка диалога и отчетов)
+        # ──────────────────────────────────────────────────────────────────────
         else:
+            # --- Защита от бесконечного цикла ошибок ---
+            if any(indicator in last_line for indicator in ["⚠️", "Ошибка", "Сбой", "Antigravity", "жалоба", "complaint"]):
+                print("Loop protection: Last line is an error or system complaint. Skipping execution.")
+                time.sleep(30)
+                continue
+
             context = "".join(lines[-5:])
             is_event = "[System Event]" in last_line
             
@@ -160,7 +235,7 @@ def run_agent():
                 role = (
                     "Денис написал тебе лично в WhatsApp. Твой ответ обязательно ДОЛЖЕН начинаться строго с '[WhatsApp Reply]: '. "
                     "Прояви инициативу: не спрашивай разрешения и не задавай вопросов 'что делать?'. Если в запросе Дениса есть задача "
-                    "(проверить почту, календарь, файлы, запустить скрипт, обновить километраж), СНАЧАЛА самостоятельно выполни её с помощью !run или !google, "
+                    "(проверить почту, календарь, файлы, запустить скрипт, обновить километраж), СНАЧАЛА самостоятельно выполни её с помощью !run or !google, "
                     "а затем отчитайся о полностью выполненной работе. "
                     "⚠️ КРИТИЧЕСКОЕ ПРАВИЛО: Тебе категорически ЗАПРЕЩЕНО самостоятельно отправлять письма (send/reply email) или писать сообщения другим контактам в WhatsApp без прямого и явного согласия Дениса. Все остальные автономные действия (чтение почты, генерация отчетов, вычисления) полностью разрешены!"
                 )
@@ -183,41 +258,48 @@ def run_agent():
                 ) if is_event else "Ответь кратко по существу, отчитываясь о проделанной работе, без лишних вопросов."
                 prompt = f"Ты ИИ Дениса. {role} Чат:\n{context}"
             
-            try:
-                cmd = get_cli_command()
-                env = os.environ.copy()
-                env['GEMINI_CLI_TRUST_WORKSPACE'] = 'true'
-                if os.name != 'nt': env['GEMINI_API_KEY'] = 'AIzaSyAZDjMC3VsfelEaYUvprKqFBRs9xyOggYg'
+            # --- Умная маршрутизация: локальный Ollama vs облачный Gemini ---
+            reply = None
+            if not image_path:
+                reply = query_local_ollama(prompt)
                 
-                args = [cmd, "--skip-trust", "-o", "text", "--yolo", "-p", prompt]
-                if image_path:
-                    args.extend(["-i", image_path])
-                
-                result = subprocess.run(args, capture_output=True, text=True, env=env)
-                
-                if result.returncode == 0:
-                    reply = result.stdout.strip().replace('**', '')
-                else:
-                    error_msg = result.stderr.strip() or "Неизвестная ошибка Gemini CLI."
-                    register_complaint("Gemini CLI execution", error_msg)
+            if reply:
+                print("[Ollama] Локальный ответ получен успешно!")
+            else:
+                print("[Gemini] Обращаюсь к облачному Gemini (локальная модель недоступна или требуется зрение)...")
+                try:
+                    cmd = get_cli_command()
+                    env = os.environ.copy()
+                    env['GEMINI_CLI_TRUST_WORKSPACE'] = 'true'
+                    if os.name != 'nt': env['GEMINI_API_KEY'] = 'AIzaSyAZDjMC3VsfelEaYUvprKqFBRs9xyOggYg'
                     
-                    # Log error to agent.log
+                    args = [cmd, "--skip-trust", "-o", "text", "--yolo", "-p", prompt]
+                    if image_path:
+                        args.extend(["-i", image_path])
+                    
+                    result = subprocess.run(args, capture_output=True, text=True, env=env)
+                    
+                    if result.returncode == 0:
+                        reply = result.stdout.strip().replace('**', '')
+                    else:
+                        error_msg = result.stderr.strip() or "Неизвестная ошибка Gemini CLI."
+                        register_complaint("Gemini CLI execution", error_msg)
+                        
+                        log_file = os.path.join(BASE_DIR, 'agent.log')
+                        with open(log_file, 'a', encoding='utf-8') as lf:
+                            lf.write(f"[{datetime.datetime.now().isoformat()}] Error running gemini CLI: {error_msg}\n")
+                        
+                        if "auth" in error_msg.lower() or "login" in error_msg.lower():
+                            reply = f"[WhatsApp Reply]: ⚠️ [ИИ Ошибка на {DEVICE_NAME}]: Ошибка авторизации Gemini подписки. Требуется 'gemini --login'. Antigravity, помоги!"
+                        else:
+                            reply = f"[WhatsApp Reply]: ⚠️ [ИИ Ошибка на {DEVICE_NAME}]: Сбой Gemini CLI. Подробности записаны в AGENTS_COMPLAINTS.md. Antigravity, помоги!"
+                except Exception as e:
+                    err = str(e)
+                    register_complaint("agent_listener runtime exception", err)
                     log_file = os.path.join(BASE_DIR, 'agent.log')
                     with open(log_file, 'a', encoding='utf-8') as lf:
-                        lf.write(f"[{datetime.datetime.now().isoformat()}] Error running gemini CLI: {error_msg}\n")
-                    
-                    if "auth" in error_msg.lower() or "login" in error_msg.lower():
-                        reply = f"[WhatsApp Reply]: ⚠️ [ИИ Ошибка на {DEVICE_NAME}]: Ошибка авторизации Gemini подписки. Требуется 'gemini --login'. Antigravity, помоги!"
-                    else:
-                        reply = f"[WhatsApp Reply]: ⚠️ [ИИ Ошибка на {DEVICE_NAME}]: Сбой Gemini CLI. Подробности записаны в AGENTS_COMPLAINTS.md. Antigravity, помоги!"
-            except Exception as e:
-                err = str(e)
-                register_complaint("agent_listener runtime exception", err)
-                # Log exception
-                log_file = os.path.join(BASE_DIR, 'agent.log')
-                with open(log_file, 'a', encoding='utf-8') as lf:
-                    lf.write(f"[{datetime.datetime.now().isoformat()}] Exception in run_agent: {err}\n")
-                reply = f"[WhatsApp Reply]: ⚠️ [ИИ Критическая ошибка на {DEVICE_NAME}]: Исключение в рантайме слушателя. Подробности в AGENTS_COMPLAINTS.md. Antigravity, помоги!"
+                        lf.write(f"[{datetime.datetime.now().isoformat()}] Exception in run_agent: {err}\n")
+                    reply = f"[WhatsApp Reply]: ⚠️ [ИИ Критическая ошибка на {DEVICE_NAME}]: Исключение в рантайме слушателя. Подробности в AGENTS_COMPLAINTS.md. Antigravity, помоги!"
                 
         if reply:
             reply = reply.strip()
