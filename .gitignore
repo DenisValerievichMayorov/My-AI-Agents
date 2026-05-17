@@ -33,4 +33,5 @@ venv/
 .DS_Store
 Thumbs.db
 node_modules
+*.sync-conflict-*
 node_modules
