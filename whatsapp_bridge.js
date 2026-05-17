@@ -11,12 +11,40 @@ const CHAT_FILE = path.join(SYNC_DIR, 'ai_chat_room.txt');
 let activeDenisChatId = null;
 const sentReplies = new Set();
 
+const LOG_FILE = path.join(SYNC_DIR, 'whatsapp_bridge.log');
+
+// Переопределяем console для синхронного вывода в файл (избегаем буферизации stdout)
+const originalLog = console.log;
+const originalError = console.error;
+
+console.log = function(...args) {
+    originalLog.apply(console, args);
+    try {
+        const msg = `[${new Date().toLocaleString()}] ` + args.map(arg => typeof arg === 'object' ? JSON.stringify(arg) : arg).join(' ') + '\n';
+        fs.appendFileSync(LOG_FILE, msg);
+    } catch(e) {}
+};
+
+console.error = function(...args) {
+    originalError.apply(console, args);
+    try {
+        const msg = `[${new Date().toLocaleString()}] [ERROR] ` + args.map(arg => typeof arg === 'object' ? JSON.stringify(arg) : arg).join(' ') + '\n';
+        fs.appendFileSync(LOG_FILE, msg);
+    } catch(e) {}
+};
+
+console.log('🚀 Starting WhatsApp Bridge script...');
+
 // Инициализация клиента с сохранением сессии
 const client = new Client({
     authStrategy: new LocalAuth(),
     puppeteer: {
-        headless: true,
-        args: ['--no-sandbox', '--disable-setuid-sandbox']
+        headless: false,
+        args: [
+            '--no-sandbox', 
+            '--disable-setuid-sandbox',
+            '--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
+        ]
     }
 });
 

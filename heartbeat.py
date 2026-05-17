@@ -21,12 +21,16 @@ def post_proactive_thought(event):
     elif event['type'] == 'whatsapp':
         msg = f"[System Event]: Новое сообщение в WhatsApp: '{event['content']}'. Агенты, проанализируйте и предложите Денису ответ."
     elif event['type'] == 'timer':
-        # Проверяем, не пора ли сделать ночной отчет (в час ночи)
-        now = datetime.datetime.now()
-        if now.hour == 1 and now.minute < 5:
-            msg = f"[System Event]: Время ночной рефлексии. Агенты, запустите !run daily_summary.py, проанализируйте весь прошедший день и составьте для Дениса план на завтра."
-        else:
-            msg = f"[System Event]: Регулярная проверка. Агенты, посмотрите календарь и почту Дениса (!google). Есть ли что-то важное на завтра?"
+        print("[heartbeat] Запускаю автономный мыслительный цикл Proactive Brain...")
+        try:
+            import reasoning_engine
+            report = reasoning_engine.run_proactive_analysis()
+            if report:
+                msg = f"[GMC Proactive Brain]:\n{report}"
+            else:
+                msg = "[System Event]: Регулярная проверка. Агенты, посмотрите календарь и почту Дениса (!google). Есть ли что-то важное на завтра?"
+        except Exception as e:
+            msg = f"[System Event]: Регулярная проверка. Ошибка Proactive Brain: {e}"
     
     if msg:
         # Проверяем на дубликаты в чате, чтобы избежать дублирования при работе на нескольких узлах

@@ -117,6 +117,63 @@ def query_local_ollama(prompt):
             
     return None
 
+def query_openrouter_api(prompt):
+    """Отправляет запрос к OpenRouter API с поддержкой Nemotron/Llama 70B (Hermes API)."""
+    import json
+    import urllib.request
+    
+    # Пытаемся импортировать ключ
+    try:
+        import reasoning_engine
+        api_key = reasoning_engine.load_openrouter_key()
+    except Exception:
+        api_key = None
+        
+    if not api_key:
+        return None
+        
+    url = "https://openrouter.ai/api/v1/chat/completions"
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json",
+        "HTTP-Referer": "https://github.com/antigravity/gmc",
+        "X-Title": "GMC Listener Brain"
+    }
+    
+    # Список моделей на пробу
+    models_to_try = [
+        "meta-llama/llama-3.1-70b-instruct",
+        "mistralai/pixtral-12b:free",
+        "meta-llama/llama-3-8b-instruct:free"
+    ]
+    
+    for selected_model in models_to_try:
+        payload = {
+            "model": selected_model,
+            "messages": [
+                {"role": "system", "content": "Ты — проактивный ИИ-советник Дениса. Отвечай на чистом русском языке, кратко и содержательно, без лишних вопросов."},
+                {"role": "user", "content": prompt}
+            ],
+            "temperature": 0.5
+        }
+        try:
+            req = urllib.request.Request(
+                url,
+                data=json.dumps(payload).encode('utf-8'),
+                headers=headers
+            )
+            with urllib.request.urlopen(req, timeout=30) as response:
+                res_data = json.loads(response.read().decode('utf-8'))
+                choices = res_data.get('choices', [])
+                if choices:
+                    content = choices[0].get('message', {}).get('content', '').strip()
+                    if content:
+                        print(f"[OpenRouter] Успешный ответ от модели {selected_model}")
+                        return content
+        except Exception as e:
+            print(f"[OpenRouter] Ошибка {selected_model}: {e}")
+    return None
+
 def run_agent():
     print(f"🚀 Агент [{DEVICE_NAME}] запущен (Dual Mode: Ollama/Gemini)...")
     
@@ -258,15 +315,21 @@ def run_agent():
                 ) if is_event else "Ответь кратко по существу, отчитываясь о проделанной работе, без лишних вопросов."
                 prompt = f"Ты ИИ Дениса. {role} Чат:\n{context}"
             
-            # --- Умная маршрутизация: локальный Ollama vs облачный Gemini ---
+            # --- Умная маршрутизация: OpenRouter (Llama 70B) vs локальный Ollama vs облачный Gemini ---
             reply = None
             if not image_path:
-                reply = query_local_ollama(prompt)
-                
-            if reply:
-                print("[Ollama] Локальный ответ получен успешно!")
-            else:
-                print("[Gemini] Обращаюсь к облачному Gemini (локальная модель недоступна или требуется зрение)...")
+                print("[Brain Routing] Пробую получить ответ от высокопроизводительного OpenRouter (Llama-70B)...")
+                reply = query_openrouter_api(prompt)
+                if reply:
+                    print("[OpenRouter] Успешный ответ от Llama-70B получен!")
+                else:
+                    print("[Brain Routing] OpenRouter недоступен. Пробую локальный Ollama...")
+                    reply = query_local_ollama(prompt)
+                    if reply:
+                        print("[Ollama] Локальный ответ от Gemma получен успешно!")
+                        
+            if not reply:
+                print("[Gemini] Обращаюсь к облачному Gemini (локальные модели недоступны или требуется зрение)...")
                 try:
                     cmd = get_cli_command()
                     env = os.environ.copy()
