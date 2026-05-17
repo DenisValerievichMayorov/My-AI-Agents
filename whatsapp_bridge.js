@@ -7,6 +7,10 @@ const SYNC_DIR = __dirname;
 const INBOX_FILE = path.join(SYNC_DIR, 'whatsapp_messages.txt');
 const CHAT_FILE = path.join(SYNC_DIR, 'ai_chat_room.txt');
 
+// Глобальные переменные для отслеживания активного чата Дениса и отправленных ИИ ответов
+let activeDenisChatId = null;
+const sentReplies = new Set();
+
 // Инициализация клиента с сохранением сессии
 const client = new Client({
     authStrategy: new LocalAuth(),
@@ -56,12 +60,26 @@ client.on('message_create', async msg => {
         console.log('WhatsApp Event:', entry.trim());
         fs.appendFileSync(INBOX_FILE, entry);
 
-        // Интеграция с ИИ: Общение ТОЛЬКО с Денисом в его личном чате (Self-Chat)
-        const isSelfChat = (chat.id._serialized === client.info.wid._serialized) || (chat.name === "Денис (Вы)") || (chat.name === "Денис");
+        // Интеграция с ИИ: Общение ТОЛЬКО с Денисом в его личном чате (Self-Chat или Сын / Сын (Вы))
+        const isSelfChat = (chat.id._serialized === client.info.wid._serialized) || 
+                           (chat.name === "Денис (Вы)") || 
+                           (chat.name === "Денис") || 
+                           (chat.name === "Сын") || 
+                           (chat.name === "Сын (Вы)");
+                           
         const isBotReply = msg.body.startsWith('[WhatsApp Reply]:') || msg.body.startsWith('GMC:') || msg.body.includes('Sent WhatsApp Reply');
+        
+        // Предотвращение бесконечного цикла: если это сообщение было отправлено самим ботом
+        const cleanMsg = msg.body.trim();
+        if (sentReplies.has(cleanMsg)) {
+            sentReplies.delete(cleanMsg);
+            console.log(`ℹ️ Ignoring our own sent message to prevent loop: "${cleanMsg}"`);
+            return;
+        }
 
         if (isSelfChat && isMe && !isBotReply && msg.body.trim()) {
-            console.log('🤖 Triggering AI response for Denis...');
+            console.log(`🤖 Triggering AI response for Denis in chat: ${chat.name}...`);
+            activeDenisChatId = chat.id._serialized; // Запоминаем ID чата, куда нужно ответить
             const mediaPrompt = filename ? ` [Media: ${filename}]` : "";
             const eventLine = `\n[System Event]: WhatsApp от Дениса: ${msg.body}${mediaPrompt} (Пожалуйста, ответь Денису в WhatsApp. Твой ответ должен начинаться строго с '[WhatsApp Reply]: ')\n`;
             fs.appendFileSync(CHAT_FILE, eventLine);
@@ -82,7 +100,8 @@ setInterval(async () => {
                 let repliesToSend = [];
 
                 for (let line of lines) {
-                    if (line.includes('[WhatsApp Reply]:')) {
+                    // Парсим только реальные ответы ИИ, игнорируя системные промпты с этой строкой
+                    if (line.includes('[WhatsApp Reply]:') && !line.includes('[System Event]:')) {
                         let parts = line.split('[WhatsApp Reply]:');
                         if (parts.length > 1) {
                             repliesToSend.push(parts[1].trim());
@@ -97,11 +116,13 @@ setInterval(async () => {
 
                 // Отправляем собранные ответы Денису в WhatsApp
                 if (repliesToSend.length > 0 && client.info) {
-                    const myChatId = client.info.wid._serialized;
+                    // Отправляем обратно в тот же чат, где Денис задал вопрос, либо в Self-Chat по умолчанию
+                    const targetChatId = activeDenisChatId || client.info.wid._serialized;
                     for (let reply of repliesToSend) {
                         if (reply) {
-                            await client.sendMessage(myChatId, reply);
-                            console.log(`✅ Sent WhatsApp Reply to Denis: ${reply}`);
+                            sentReplies.add(reply.trim()); // Сохраняем в памяти, чтобы проигнорировать в message_create
+                            await client.sendMessage(targetChatId, reply);
+                            console.log(`✅ Sent WhatsApp Reply to chat (${targetChatId}): ${reply}`);
                         }
                     }
                 }
