@@ -1,5 +1,12 @@
-import time
+import sys
 import os
+
+# Добавляем путь к venv, чтобы видеть все библиотеки
+venv_path = r"C:\Users\anton\AppData\Local\hermes\hermes-agent\venv\Lib\site-packages"
+if venv_path not in sys.path:
+    sys.path.append(venv_path)
+
+import time
 import datetime
 import socket
 from sensors import get_all_events
@@ -55,10 +62,10 @@ def main():
     last_fast_thought_time = 0 # Локальный быстрый анализ
     last_cleanup_time = 0 # Запуск очистки сразу при старте
     CLEANUP_INTERVAL = 3600 # 1 час
-    FAST_INTERVAL = 45 # каждые 45 секунд
+    FAST_INTERVAL = 20 # каждые 20 секунд
     IDLE_TIMEOUT = 1800 # 30 минут
     print(f"[{datetime.datetime.now().strftime('%H:%M:%S')}] 🫀 Сердцебиение запущено...")
-    
+
     while True:
         current_time = time.time()
         events = get_all_events()
@@ -82,11 +89,11 @@ def main():
             except Exception as e:
                 pass
             last_fast_thought_time = current_time
-        
-        # Автоматическая очистка мусора и памяти раз в час
-        if current_time - last_cleanup_time > CLEANUP_INTERVAL:
-            print("[heartbeat] Запуск автоматической очистки системы и памяти...")
-            try:
+
+        # Фиксированный интервал мыслей: 60 секунд (тестовый режим)
+        current_thought_interval = 60
+
+        if current_time - last_thought_time > current_thought_interval:
                 import cleaner
                 stats = cleaner.run_garbage_collector()
                 if stats['deleted_files'] > 0 or stats['killed_chromes'] > 0:
