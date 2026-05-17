@@ -112,17 +112,22 @@ def query_local_ollama(prompt, system_prompt="You are a helpful AI assistant.", 
     return None
 
 def run_fast_local_analysis(chat_log_txt=""):
-    """Быстрый локальный анализ через Ollama для мониторинга 'на лету'."""
+    """Быстрый локальный анализ через Ollama с автоматическим переключением на OpenRouter при сбое."""
     system_prompt = (
-        "Ты — локальный Диспетчер-Аналитик (Gemma Triage Officer). Твоя задача — "
-        "каждые 45 секунд проверять последние логи, оценивать уровень безопасности и приоритизировать задачи.\n"
-        "Выдавай короткий, но подробный отчет в следующем формате:\n"
+        "Ты — локальный Диспетчер-Аналитик. Твоя задача — "
+        "проверить последние логи, оценить уровень безопасности и приоритизировать задачи.\n"
         "Статус: [🟢 Рутина / 🟡 Внимание / 🔴 Тревога]\n"
-        "Сводка: (1-2 предложения, что произошло за последние минуты)\n"
-        "Действие: (Нужно ли вмешательство Главного Агента или Дениса?)"
+        "Сводка: (1-2 предложения)\n"
+        "Действие: (Нужно ли вмешательство?)"
     )
     prompt = f"Последние сообщения в системе:\n{chat_log_txt}\n\nСделай быстрый диспетчерский вывод."
-    return query_local_ollama(prompt, system_prompt, model="gemma")
+    
+    res = query_local_ollama(prompt, system_prompt, model="gemma")
+    if res:
+        return res
+    
+    print("[Fallback] Ollama недоступна, переключаюсь на OpenRouter для отчета...")
+    return query_openrouter(prompt, system_prompt, model="meta-llama/llama-3-8b-instruct:free")
 def query_deep_reasoning(prompt, system_prompt, model="nvidia/nemotron-3-super-120b-a12b:free"):
     """Реализует System 2 Multi-Turn Self-Correction (глубокие рассуждения с самокритикой)
     для исключения сухой констатации фактов и выработки по-настоящему умных решений."""
