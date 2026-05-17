@@ -29,13 +29,17 @@ def check_mail():
             # Используем абсолютный путь к python
             py = "py" if os.name == 'nt' else "python3"
             result = subprocess.run([py, script_path], capture_output=True, text=True, timeout=30)
-            if result.stdout and "Найдено писем: 1" in result.stdout:
-                # Парсим заголовок (упрощенно)
-                subject = "Новое письмо"
-                for line in result.stdout.split('\n'):
-                    if "Тема:" in line:
-                        subject = line.replace("Тема:", "").strip()
-                return [{"type": "mail", "content": subject}]
+            if result.stdout and "Найдено писем:" in result.stdout:
+                count_line = [l for l in result.stdout.split('\n') if "Найдено писем:" in l][0]
+                count = int(count_line.split(":")[-1].strip())
+                if count > 0:
+                    # Парсим заголовок (упрощенно)
+                    subject = "Новое письмо"
+                    for line in result.stdout.split('\n'):
+                        if "Тема:" in line:
+                            subject = line.replace("Тема:", "").strip()
+                            break
+                    return [{"type": "mail", "content": subject}]
         except Exception:
             pass
     return []

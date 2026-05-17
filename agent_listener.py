@@ -3,6 +3,7 @@ import time
 import subprocess
 import socket
 import urllib.request
+import datetime
 
 # Настройки
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -54,7 +55,7 @@ def run_agent():
             time.sleep(5); continue
             
         last_line = lines[-1].strip()
-        if f"[{DEVICE_NAME}]" in last_line:
+        if last_line.startswith(f"[{DEVICE_NAME}]:"):
             time.sleep(10); continue
             
         print(f"[{DEVICE_NAME}] Думаю через Gemini CLI (Subscription)...")
@@ -62,7 +63,8 @@ def run_agent():
         reply = ""
         if "!run" in last_line.lower():
             after_run = last_line.lower().split("!run")[-1].strip()
-            script_name = after_run.split()[0] if after_run.split() else ""
+            # Улучшенный парсинг имени скрипта (убираем запятые и точки в конце)
+            script_name = after_run.split()[0].rstrip(',.') if after_run.split() else ""
             script_path = os.path.join(BASE_DIR, script_name)
             if os.path.exists(script_path):
                 py = "py" if os.name == 'nt' else "python3"
@@ -113,7 +115,7 @@ def run_agent():
                 env['GEMINI_CLI_TRUST_WORKSPACE'] = 'true'
                 if os.name != 'nt': env['GEMINI_API_KEY'] = 'AIzaSyAZDjMC3VsfelEaYUvprKqFBRs9xyOggYg'
                 
-                args = [cmd, "-m", "gemini-1.5-flash-8b", "-p", prompt]
+                args = [cmd, "--skip-trust", "-o", "text", "--yolo", "-p", prompt]
                 if image_path:
                     args.extend(["-i", image_path])
                 
@@ -122,15 +124,64 @@ def run_agent():
                 if result.returncode == 0:
                     reply = result.stdout.strip().replace('**', '')
                 else:
-                    error_msg = result.stderr.lower()
-                    if "auth" in error_msg or "login" in error_msg:
+                    error_msg = result.stderr
+                    # Log error to agent.log
+                    log_file = os.path.join(BASE_DIR, 'agent.log')
+                    with open(log_file, 'a', encoding='utf-8') as lf:
+                        lf.write(f"[{datetime.datetime.now().isoformat()}] Error running gemini CLI: {error_msg}\n")
+                    
+                    if "auth" in error_msg.lower() or "login" in error_msg.lower():
                         reply = "Ошибка авторизации подписки на ПК. Введите 'gemini --login' в терминале."
                     else:
-                        reply = "Принято. Ожидаю новых инструкций."
-            except Exception:
-                reply = "Принято. Ожидаю новых инструкций."
+                        reply = ""
+            except Exception as e:
+                # Log exception
+                log_file = os.path.join(BASE_DIR, 'agent.log')
+                with open(log_file, 'a', encoding='utf-8') as lf:
+                    lf.write(f"[{datetime.datetime.now().isoformat()}] Exception in run_agent: {str(e)}\n")
+                reply = ""
                 
         if reply:
+            reply = reply.strip()
+            
+            # --- Улучшенная дедупликация и защита от "тенниса" ---
+            # 1. Проверка на пустой или мусорный ответ
+            if not reply or (len(reply) < 5 and not reply.startswith("!")):
+                print("Reply too short, skipping.")
+                time.sleep(15)
+                continue
+
+            # 2. Список фраз, которые не несут полезной нагрузки и зацикливают ИИ
+            stop_phrases = [
+                "принято. ожидаю новых инструкций.",
+                "принято. ожидаю инструкций.",
+                "ожидаю новых инструкций.",
+                "ожидаю инструкций.",
+                "я готов к работе.",
+                "чем я могу помочь?",
+                "готов к выполнению задач.",
+                "принято. на связи."
+            ]
+            
+            reply_lower = reply.lower().rstrip('.')
+            is_stop_phrase = any(phrase.rstrip('.') in reply_lower for phrase in stop_phrases)
+            
+            # Проверяем последние 10 сообщений (глубже поиск)
+            recent_lines = [l.strip().lower() for l in lines[-10:]] if lines else []
+            
+            # Если мы хотим сказать стоп-фразу, но она уже была - молчим
+            if is_stop_phrase:
+                if any(phrase.rstrip('.') in msg for msg in recent_lines for phrase in stop_phrases):
+                    print(f"Loop protection: Generic phrase already in history. Silent mode.")
+                    time.sleep(30)
+                    continue
+            
+            # 3. Проверка на идентичный ответ (от любого устройства)
+            if any(reply.lower() in msg for msg in recent_lines):
+                print(f"Duplicate content detected in recent history, skipping.")
+                time.sleep(20)
+                continue
+            
             new_msg = f"[{DEVICE_NAME}]: {reply}\n"
             with open(CHAT_FILE, 'a', encoding='utf-8') as f:
                 f.write(new_msg)

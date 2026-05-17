@@ -5,6 +5,14 @@ gemini_creds_backup.json
 gemini_settings_backup.json
 .wwebjs_auth/
 .wwebjs_cache/
+.gemini/
+.hermes/
+.codex/
+.ssh/
+.config/
+client_secret.json
+oauth_creds.json
+google_accounts.json
 
 # Logs and Private Data
 ai_chat_room.txt
@@ -24,3 +32,5 @@ venv/
 # OS
 .DS_Store
 Thumbs.db
+node_modules
+node_modules
