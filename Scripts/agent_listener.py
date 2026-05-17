@@ -194,7 +194,21 @@ def query_openrouter_api(prompt):
             print(f"[OpenRouter] Ошибка {selected_model}: {e}")
     return None
 
+def check_and_start_ollama():
+    """Проверяет доступность Ollama и запускает сервис, если он недоступен."""
+    import requests
+    try:
+        requests.get("http://localhost:11434/api/tags", timeout=3)
+        print("✅ Ollama уже запущена.")
+    except:
+        print("⚠️ Ollama не отвечает. Попытка запуска...")
+        subprocess.Popen([r"C:\Users\anton\AppData\Local\Programs\Ollama\ollama app.exe"], creationflags=subprocess.CREATE_NEW_CONSOLE)
+        time.sleep(10) # Ждем загрузки
+
 def run_agent():
+    # Проверяем ресурсы перед стартом
+    check_and_start_ollama()
+    
     print(f"🚀 Агент [{DEVICE_NAME}] запущен (Dual Mode: Ollama/Gemini)...")
     
     # Запуск Heartbeat Daemon в фоновом режиме
