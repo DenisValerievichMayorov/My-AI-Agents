@@ -73,12 +73,12 @@ def main():
                         lines = f.readlines()
                         chat_txt = "".join(lines[-10:])
                 fast_res = reasoning_engine.run_fast_local_analysis(chat_txt)
-                if fast_res and "Всё в порядке" not in fast_res and "Все в порядке" not in fast_res:
+                if fast_res:
                      timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-                     msg = f"[{timestamp}] [Gemma Local Monitor]: {fast_res}"
+                     msg = f"[{timestamp}] [Gemma Triage Officer]:\n{fast_res}"
                      with open(CHAT_FILE, 'a', encoding='utf-8') as f:
                          f.write(f"\n{msg}\n")
-                     print(f"[{datetime.datetime.now().strftime('%H:%M:%S')}] ⚡ Локальный монитор заметил проблему.")
+                     print(f"[{datetime.datetime.now().strftime('%H:%M:%S')}] ⚡ Локальный Диспетчер Gemma выдал отчет.")
             except Exception as e:
                 pass
             last_fast_thought_time = current_time
