@@ -46,13 +46,29 @@ def post_proactive_thought(event):
 def main():
     last_active_time = time.time()
     last_thought_time = time.time()
+    last_cleanup_time = 0 # Запуск очистки сразу при старте
     THOUGHT_INTERVAL = 1800 # 30 минут
+    CLEANUP_INTERVAL = 3600 # 1 час
     print(f"[{datetime.datetime.now().strftime('%H:%M:%S')}] 🫀 Сердцебиение запущено...")
     
     while True:
         current_time = time.time()
         events = get_all_events()
         
+        # Автоматическая очистка мусора и памяти раз в час
+        if current_time - last_cleanup_time > CLEANUP_INTERVAL:
+            print("[heartbeat] Запуск автоматической очистки системы и памяти...")
+            try:
+                import cleaner
+                stats = cleaner.run_garbage_collector()
+                if stats['deleted_files'] > 0 or stats['killed_chromes'] > 0:
+                    cleanup_msg = f"[System Alert]: 🧹 Выполнена автоматическая оптимизация: удалено {stats['deleted_files']} файлов конфликтов ({stats['bytes_saved_kb']:.2f} KB), уничтожено {stats['killed_chromes']} зависших процессов Chrome. Память и папки чисты!"
+                    with open(CHAT_FILE, 'a', encoding='utf-8') as f:
+                        f.write(f"\n{cleanup_msg}\n")
+            except Exception as e:
+                print(f"[heartbeat] Ошибка при очистке: {e}")
+            last_cleanup_time = current_time
+            
         # Регулярная мысль раз в 30 минут
         if current_time - last_thought_time > THOUGHT_INTERVAL:
             events.append({"type": "timer", "content": "auto"})
