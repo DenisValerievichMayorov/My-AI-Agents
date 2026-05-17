@@ -32,10 +32,10 @@
 - Test SSH connection to `Termux-Phone` (`100.87.207.25:8022`).
 - Test SSH connection to `Chromebook` (`100.106.187.105:22` as `denisvalerievichmayorov1`).
 
-### Step 5: Configure and Report Remote Nodes
 - **Termux Phone:** [IN PROGRESS]
   - Verify tailscale status. (CLI missing)
   - Setup SSH authorized keys using the public key. [DONE]
+  - Align Termux Background Daemons: Kill legacy processes running in `~`, delete stale files, create symbolic links to `~/Sync/` files, and restart the production daemons to guarantee they execute our latest requests-based optimizations. [TODO]
   - Re-download and install valid `antigravity-cli`. [TODO]
   - Write `Sync/Termux_Report.md` with status. [UPDATED]
 - **Chromebook:** [IN PROGRESS]
@@ -47,6 +47,7 @@
 
 ### New Step 6: System Optimization
 - **Unify Skills:** Move all skills to `~/Sync/.gemini/skills` and create symlinks in `~/.gemini/skills` to ensure synchronization and avoid duplication errors.
+- **Self-Healing Geolocation Fallback:** Implement an IP-based geolocation fallback in `get_loc_direct.py` and update `gps_logger.sh` to prevent Location crashes on Termux's Google Play build.
 - **Fix Antigravity:** Locate or request the correct source for `antigravity-cli` for arm64 (Termux).
 
 ## Self-Healing Tools
