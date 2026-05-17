@@ -43,6 +43,15 @@ def summarize_text(text):
         llm_summary = reasoning_engine.query_openrouter(prompt, system_prompt)
         if llm_summary:
             summary = f"Суммаризация (AI): {llm_summary.strip()}"
+            try:
+                from mem0 import MemoryClient
+                import os
+                if 'MEM0_API_KEY' not in os.environ:
+                    os.environ['MEM0_API_KEY'] = 'm0-FNdckglmWWITMYsm2J4MjQEmuW9zFGD5bmLN3vKp'
+                client = MemoryClient()
+                client.add(f"Получено новое письмо. Анализ:\n{llm_summary.strip()}", user_id="denis")
+            except Exception as mem_err:
+                print(f"[sensors] Ошибка сохранения в Mem0: {mem_err}")
         else:
             summary = f"Суммаризация (Auto): {text[:150]}..."
     except Exception as e:
