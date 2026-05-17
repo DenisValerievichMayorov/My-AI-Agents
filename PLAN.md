@@ -19,6 +19,7 @@
 - **Cleanup ai_chat_room.txt:** Completed, sync conflicts removed.
 - **Sync Automation:** Created `auto-sync.sh` on Chromebook and updated `INSTRUCTIONS_WINDOWS.md`.
 - **Chromebook Report:** Updated with sync automation status.
+- **OCR Werkraport:** Completed. Work schedule for Week 21 (May 18-24) extracted.
 
 ### Step 3: Cleanup `ai_chat_room.txt` [DONE]
 - Remove the repetitive loops of duplicate messages from `ai_chat_room.txt`, keeping only the system events and the last relevant status.

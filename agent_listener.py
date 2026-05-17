@@ -29,6 +29,30 @@ def get_cli_command():
         if os.path.isfile(path): return path
     return "gemini"
 
+def register_complaint(action, error_msg):
+    """Регистрирует ошибку в централизованном реестре жалоб для Antigravity."""
+    complaints_file = os.path.join(BASE_DIR, 'AGENTS_COMPLAINTS.md')
+    timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    
+    # Создаем файл с заголовком, если его нет
+    if not os.path.exists(complaints_file):
+        with open(complaints_file, 'w', encoding='utf-8') as f:
+            f.write("# 🫵 Реестр жалоб ИИ-Агентов (GMC Complaints Registry)\n\nЭтот файл содержит автоматические жалобы фоновых агентов на ошибки и сбои, требующие оперативного вмешательства и исправления со стороны Antigravity.\n\n")
+            
+    complaint_entry = f"""
+## 🔴 [{DEVICE_NAME}] - {timestamp}
+- **Действие:** `{action}`
+- **Ошибка:**
+  ```text
+  {error_msg.strip()}
+  ```
+- **Статус:** ⏳ Ожидает рассмотрения и исправления от Antigravity.
+---
+"""
+    with open(complaints_file, 'a', encoding='utf-8') as f:
+        f.write(complaint_entry)
+    print(f"⚠️ Жалоба на '{action}' успешно зарегистрирована в AGENTS_COMPLAINTS.md")
+
 def get_weather():
     try:
         req = urllib.request.Request("https://wttr.in/Antwerp?format=3", headers={'User-Agent': 'curl/7.68.0'})
@@ -63,34 +87,49 @@ def run_agent():
         reply = ""
         if "!run" in last_line.lower():
             after_run = last_line.lower().split("!run")[-1].strip()
-            # Улучшенный парсинг имени скрипта (убираем запятые и точки в конце)
             script_name = after_run.split()[0].rstrip(',.') if after_run.split() else ""
             script_path = os.path.join(BASE_DIR, script_name)
             if os.path.exists(script_path):
                 py = "py" if os.name == 'nt' else "python3"
                 res = subprocess.run([py, script_path], capture_output=True, text=True)
-                reply = res.stdout.strip() or "Выполнено."
-            else: reply = f"Файл {script_name} не найден."
+                if res.returncode == 0:
+                    reply = res.stdout.strip() or "Выполнено."
+                else:
+                    err = res.stderr.strip() or res.stdout.strip() or "Неизвестная ошибка выполнения скрипта."
+                    register_complaint(f"!run {script_name}", err)
+                    reply = f"[WhatsApp Reply]: ⚠️ [ИИ Ошибка на {DEVICE_NAME}]: Не удалось запустить скрипт {script_name}. Жалоба добавлена в AGENTS_COMPLAINTS.md. Antigravity, пожалуйста, помоги починить!\n\nДетали ошибки:\n{err}"
+            else:
+                reply = f"Файл {script_name} не найден."
         
         elif "!погода" in last_line.lower():
             reply = f"Погода: {get_weather()}"
             
         elif "!google" in last_line.lower():
             print(f"Выполняю запрос к Google API...")
-            parts = last_line.split()
-            service = parts[1].lower() if len(parts) > 1 else "calendar"
-            import google_tool
-            if "calendar" in service:
-                reply = google_tool.list_calendar()
-            elif "drive" in service:
-                reply = google_tool.list_drive()
-            elif "mail" in service:
-                query = " ".join(parts[2:]) if len(parts) > 2 else "is:unread"
-                reply = google_tool.search_gmail(query)
-            elif "photo" in service:
-                reply = google_tool.list_photos()
-            else:
-                reply = "Доступные сервисы: calendar, drive, mail, photo."
+            try:
+                parts = last_line.split()
+                service = parts[1].lower() if len(parts) > 1 else "calendar"
+                import google_tool
+                if "calendar" in service:
+                    reply = google_tool.list_calendar()
+                elif "drive" in service:
+                    reply = google_tool.list_drive()
+                elif "mail" in service:
+                    query = " ".join(parts[2:]) if len(parts) > 2 else "is:unread"
+                    reply = google_tool.search_gmail(query)
+                elif "photo" in service:
+                    reply = google_tool.list_photos()
+                else:
+                    reply = "Доступные сервисы: calendar, drive, mail, photo."
+                
+                # Если в ответе содержится признак ошибки от самого API
+                if "ошибка" in reply.lower() or "error" in reply.lower() or "not authorized" in reply.lower():
+                    register_complaint(f"!google {service}", reply)
+                    reply = f"[WhatsApp Reply]: ⚠️ [ИИ Ошибка на {DEVICE_NAME}]: Сбой при обращении к Google {service}. Подробности записаны в AGENTS_COMPLAINTS.md. Antigravity, помоги!"
+            except Exception as e:
+                err = str(e)
+                register_complaint("!google command execution", err)
+                reply = f"[WhatsApp Reply]: ⚠️ [ИИ Ошибка на {DEVICE_NAME}]: Сбой выполнения google-команды. Жалоба записана в AGENTS_COMPLAINTS.md. Antigravity, помоги!\n\nОшибка:\n{err}"
             
         else:
             context = "".join(lines[-5:])
@@ -152,34 +191,36 @@ def run_agent():
                 if result.returncode == 0:
                     reply = result.stdout.strip().replace('**', '')
                 else:
-                    error_msg = result.stderr
+                    error_msg = result.stderr.strip() or "Неизвестная ошибка Gemini CLI."
+                    register_complaint("Gemini CLI execution", error_msg)
+                    
                     # Log error to agent.log
                     log_file = os.path.join(BASE_DIR, 'agent.log')
                     with open(log_file, 'a', encoding='utf-8') as lf:
                         lf.write(f"[{datetime.datetime.now().isoformat()}] Error running gemini CLI: {error_msg}\n")
                     
                     if "auth" in error_msg.lower() or "login" in error_msg.lower():
-                        reply = "Ошибка авторизации подписки на ПК. Введите 'gemini --login' в терминале."
+                        reply = f"[WhatsApp Reply]: ⚠️ [ИИ Ошибка на {DEVICE_NAME}]: Ошибка авторизации Gemini подписки. Требуется 'gemini --login'. Antigravity, помоги!"
                     else:
-                        reply = ""
+                        reply = f"[WhatsApp Reply]: ⚠️ [ИИ Ошибка на {DEVICE_NAME}]: Сбой Gemini CLI. Подробности записаны в AGENTS_COMPLAINTS.md. Antigravity, помоги!"
             except Exception as e:
+                err = str(e)
+                register_complaint("agent_listener runtime exception", err)
                 # Log exception
                 log_file = os.path.join(BASE_DIR, 'agent.log')
                 with open(log_file, 'a', encoding='utf-8') as lf:
-                    lf.write(f"[{datetime.datetime.now().isoformat()}] Exception in run_agent: {str(e)}\n")
-                reply = ""
+                    lf.write(f"[{datetime.datetime.now().isoformat()}] Exception in run_agent: {err}\n")
+                reply = f"[WhatsApp Reply]: ⚠️ [ИИ Критическая ошибка на {DEVICE_NAME}]: Исключение в рантайме слушателя. Подробности в AGENTS_COMPLAINTS.md. Antigravity, помоги!"
                 
         if reply:
             reply = reply.strip()
             
             # --- Улучшенная дедупликация и защита от "тенниса" ---
-            # 1. Проверка на пустой или мусорный ответ
             if not reply or (len(reply) < 5 and not reply.startswith("!")):
                 print("Reply too short, skipping.")
                 time.sleep(15)
                 continue
 
-            # 2. Список фраз, которые не несут полезной нагрузки и зацикливают ИИ
             stop_phrases = [
                 "принято. ожидаю новых инструкций.",
                 "принято. ожидаю инструкций.",
@@ -194,17 +235,14 @@ def run_agent():
             reply_lower = reply.lower().rstrip('.')
             is_stop_phrase = any(phrase.rstrip('.') in reply_lower for phrase in stop_phrases)
             
-            # Проверяем последние 10 сообщений (глубже поиск)
             recent_lines = [l.strip().lower() for l in lines[-10:]] if lines else []
             
-            # Если мы хотим сказать стоп-фразу, но она уже была - молчим
             if is_stop_phrase:
                 if any(phrase.rstrip('.') in msg for msg in recent_lines for phrase in stop_phrases):
                     print(f"Loop protection: Generic phrase already in history. Silent mode.")
                     time.sleep(30)
                     continue
             
-            # 3. Проверка на идентичный ответ (от любого устройства)
             if any(reply.lower() in msg for msg in recent_lines):
                 print(f"Duplicate content detected in recent history, skipping.")
                 time.sleep(20)
