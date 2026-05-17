@@ -9,6 +9,14 @@ DEVICE_NAME = socket.gethostname().lower()
 def is_android():
     return 'motorola' in DEVICE_NAME or os.name != 'nt' and 'penguin' not in DEVICE_NAME
 
+def log_chat(message):
+    """Записывает лог общения с ИИ в файл."""
+    log_path = os.path.join(BASE_DIR, '..', 'Logs', 'chat_history.log')
+    os.makedirs(os.path.dirname(log_path), exist_ok=True)
+    with open(log_path, 'a', encoding='utf-8') as f:
+        timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        f.write(f"[{timestamp}] {message}\n")
+
 def check_sync():
     """Проверяет чат. Если есть новые сообщения от других - возвращает событие."""
     chat_file = os.path.join(BASE_DIR, 'ai_chat_room.txt')
@@ -26,77 +34,140 @@ def check_sync():
 _last_mail_check = 0
 _cached_mail_events = []
 
+def summarize_text(text):
+    """Сжимает текст письма с помощью доступного контекста агента."""
+    try:
+        import reasoning_engine
+        prompt = f"Проанализируй это письмо (включая вложения). Выдай структурированный ответ:\n1. **Суть письма**: 1-2 предложения.\n2. **Требуемые действия**: (если есть, иначе 'Нет').\n3. **Черновик ответа**: (если письмо подразумевает ответ, напиши короткий готовый черновик ответа, иначе 'Не требуется').\n\nТекст письма:\n{text}"
+        system_prompt = "Ты - личный ассистент Дениса (электрик, живет в Антверпене). Анализируй почту структурированно, готовь черновики ответов и давай подсказки."
+        llm_summary = reasoning_engine.query_openrouter(prompt, system_prompt)
+        if llm_summary:
+            summary = f"Суммаризация (AI): {llm_summary.strip()}"
+        else:
+            summary = f"Суммаризация (Auto): {text[:150]}..."
+    except Exception as e:
+        print(f"[sensors] Ошибка LLM суммаризации: {e}")
+        summary = f"Суммаризация (Fallback): {text[:150]}..."
+
+    text_lower = text.lower()
+    if 'задача' in text_lower or 'срочно' in text_lower:
+        summary = f"[ВАЖНО] {summary}"
+    return summary 
+
+import base64
+import io
+
+def get_email_content(service, msg_id):
+    msg_detail = service.users().messages().get(userId='me', id=msg_id).execute()
+    payload = msg_detail.get('payload', {})
+
+    body_text = msg_detail.get('snippet', '') + '\n\n'
+    attachments_text = ''
+
+    def parse_parts(parts):
+        nonlocal body_text, attachments_text
+        for part in parts:
+            mimeType = part.get('mimeType', '')
+            filename = part.get('filename', '')
+            body = part.get('body', {})
+            data = body.get('data')
+            attachmentId = body.get('attachmentId')
+
+            if 'parts' in part:
+                parse_parts(part['parts'])
+
+            if mimeType == 'text/plain' and data and not filename:
+                try:
+                    text = base64.urlsafe_b64decode(data).decode('utf-8', errors='replace')
+                    body_text += text + '\n'
+                except:
+                    pass
+            elif attachmentId and filename:
+                try:
+                    attach = service.users().messages().attachments().get(userId='me', messageId=msg_id, id=attachmentId).execute()
+                    file_data = base64.urlsafe_b64decode(attach['data'])
+                    attachments_text += f'\n--- Вложение: {filename} ---\n'
+
+                    if filename.lower().endswith('.pdf'):
+                        try:
+                            import PyPDF2
+                            pdf_reader = PyPDF2.PdfReader(io.BytesIO(file_data))
+                            extracted = ''
+                            for page in pdf_reader.pages[:5]:
+                                extracted += page.extract_text() + '\n'
+                            attachments_text += extracted[:2000]
+                        except Exception as e:
+                            attachments_text += f'[Не удалось прочитать PDF: {e}]\n'
+                    elif filename.lower().endswith(('.txt', '.csv', '.json', '.md')):
+                        attachments_text += file_data.decode('utf-8', errors='replace')[:2000]
+                    else:
+                        attachments_text += f'[Вложение {filename} (тип: {mimeType}) сохранено, но текст не извлечен]\n'
+                except Exception as e:
+                    print(f'Ошибка загрузки вложения {filename}: {e}')
+
+    if 'parts' in payload:
+        parse_parts(payload['parts'])
+    elif payload.get('body', {}).get('data'):
+        try:
+            body_text += base64.urlsafe_b64decode(payload['body']['data']).decode('utf-8', errors='replace')
+        except:
+            pass
+
+    full_text = body_text.strip()
+    if attachments_text.strip():
+        full_text += '\n' + attachments_text.strip()
+
+    return full_text
+
 def check_mail():
-    """Проверяет почту на новые непрочитанные сообщения с кэшированием на 45 секунд."""
+    """Проверяет почту по одному письму за цикл."""
     global _last_mail_check, _cached_mail_events
     now_ts = datetime.datetime.now().timestamp()
     if now_ts - _last_mail_check < 45:
         return _cached_mail_events
-        
+
     _last_mail_check = now_ts
     _cached_mail_events = []
-    
-    # 1. Проверяем новые непрочитанные через Gmail API (google_tool)
+
     try:
         import google_tool
         creds = google_tool.get_creds()
         if creds:
             from googleapiclient.discovery import build
             service = build('gmail', 'v1', credentials=creds)
-            results = service.users().messages().list(userId='me', q='is:unread', maxResults=5).execute()
+            # Получаем список всех писем
+            results = service.users().messages().list(userId='me', maxResults=50).execute()
             messages = results.get('messages', [])
-            
-            notified_file = os.path.join(BASE_DIR, 'logs', 'notified_emails.txt')
+            # Разворачиваем, чтобы обрабатывать самые старые первыми
+            messages.reverse()
+
+            notified_file = os.path.join(BASE_DIR, '..', 'Logs', 'notified_emails.txt')
             os.makedirs(os.path.dirname(notified_file), exist_ok=True)
             notified_ids = set()
             if os.path.exists(notified_file):
                 with open(notified_file, 'r', encoding='utf-8') as nf:
                     notified_ids = set(line.strip() for line in nf if line.strip())
 
-            new_emails = []
             for m in messages:
                 m_id = m['id']
                 if m_id not in notified_ids:
-                    msg_detail = service.users().messages().get(userId='me', id=m_id).execute()
-                    headers = msg_detail.get('payload', {}).get('headers', [])
-                    subject = next((h['value'] for h in headers if h['name'].lower() == 'subject'), 'Без темы')
-                    from_ = next((h['value'] for h in headers if h['name'].lower() == 'from'), 'Неизвестный отправитель')
-                    
-                    new_emails.append(m_id)
+                    # Обрабатываем только одно письмо за раз
+                    body = get_email_content(service, m_id)
+                    summary = summarize_text(body)
+
                     _cached_mail_events.append({
                         "type": "mail",
-                        "content": f"От: {from_} | Тема: {subject}"
+                        "content": summary
                     })
-            
-            if new_emails:
-                with open(notified_file, 'a', encoding='utf-8') as nf:
-                    for m_id in new_emails:
+
+                    with open(notified_file, 'a', encoding='utf-8') as nf:
                         nf.write(f"{m_id}\n")
+
+                    # Прерываем цикл, чтобы обработать только одно письмо
+                    break
     except Exception as e:
         print(f"[sensors] Ошибка проверки Gmail API: {e}")
-
-    # 2. Если Gmail API недоступен, пробуем резервный IMAP поиск писем от ABVV/FGTB
-    if not _cached_mail_events:
-        script_path = os.path.join(BASE_DIR, 'Legacy', 'get_gmail.py')
-        if os.path.exists(script_path) and os.name == 'nt':
-            try:
-                py = "py" if os.name == 'nt' else "python3"
-                result = subprocess.run([py, script_path], capture_output=True, text=True, timeout=20)
-                if result.stdout and "Найдено писем:" in result.stdout:
-                    count_line = [l for l in result.stdout.split('\n') if "Найдено писем:" in l][0]
-                    count = int(count_line.split(":")[-1].strip())
-                    if count > 0:
-                        subject = "Новое письмо ABVV/FGTB"
-                        for line in result.stdout.split('\n'):
-                            if "Тема:" in line:
-                                subject = line.replace("Тема:", "").strip()
-                                break
-                        _cached_mail_events = [{"type": "mail", "content": f"ABVV: {subject}"}]
-            except Exception:
-                pass
-                
     return _cached_mail_events
-
 def check_photos():
     """Проверяет новые фото на Android."""
     if not is_android(): return []
@@ -133,6 +204,26 @@ def check_whatsapp():
         except Exception: pass
     return []
 
+def check_tasks():
+    """Проверяет активные задачи в Google Tasks."""
+    try:
+        import google_tool
+        creds = google_tool.get_creds()
+        if creds:
+            from googleapiclient.discovery import build
+            service = build('tasks', 'v1', credentials=creds)
+            # Список всех списков задач
+            task_lists = service.tasklists().list().execute().get('taskLists', [])
+            tasks_list = []
+            for tlist in task_lists:
+                tasks = service.tasks().list(tasklist=tlist['id'], showCompleted=False).execute().get('items', [])
+                for t in tasks:
+                    tasks_list.append(f"{tlist['title']}: {t.get('title', 'Без названия')}")
+            return [{"type": "tasks", "content": "; ".join(tasks_list)}] if tasks_list else []
+    except Exception as e:
+        print(f"[sensors] Ошибка проверки Google Tasks: {e}")
+    return []
+
 def get_all_events():
     """Собирает все события со всех сенсоров."""
     all_events = []
@@ -140,4 +231,5 @@ def get_all_events():
     all_events.extend(check_mail())
     all_events.extend(check_photos())
     all_events.extend(check_whatsapp())
+    all_events.extend(check_tasks())
     return all_events
