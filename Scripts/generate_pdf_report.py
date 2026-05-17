@@ -17,7 +17,8 @@ COORDINATES_CACHE = {
     "wilrijk": (51.1685, 4.3989),
     "nijlen": (51.1578, 4.6853),
     "gent": (51.0374, 3.6931),
-    "rumst": (51.0772, 4.4239),
+    "rumst": (51.0924, 4.4079),
+    "la esploro": (51.0259, 4.4776),
     "antwerpen": (51.21361, 4.43956)
 }
 
@@ -41,22 +42,24 @@ FONT_NAME = "RobotoCustom" if FONT_PATH else "Arial"
 def load_tasks_from_csv():
     tasks = []
     if os.path.exists(INPUT_CSV):
-        with open(INPUT_CSV, 'r', encoding='utf-8') as f:
+        # Используем utf-8-sig для корректной обработки BOM в Windows
+        with open(INPUT_CSV, 'r', encoding='utf-8-sig') as f:
             reader = csv.DictReader(f)
             for row in reader:
                 desc = row['Задание']
-                loc = "Antwerpen"
-                if '(' in desc and ')' in desc:
-                    loc = desc[desc.rfind('(')+1:desc.rfind(')')]
-                elif '-' in desc:
-                    parts = desc.split('-')
-                    if len(parts) > 1:
-                        loc = parts[-1].strip().split(' ')[0]
+                desc_lower = desc.lower()
+                
+                # Приоритет поиска локаций
+                found_loc = "antwerpen"
+                for key in COORDINATES_CACHE.keys():
+                    if key in desc_lower and key != "engelselei 81, 2140 antwerpen, belgium" and key != "antwerpen":
+                        found_loc = key
+                        break
                 
                 tasks.append({
                     "date": row['Дата'],
                     "desc": desc,
-                    "loc": loc
+                    "loc": found_loc
                 })
     return tasks
 
@@ -70,48 +73,34 @@ SAMPLE_TASKS = [
 
 class PDFReport(FPDF):
     def header(self):
-        if FONT_PATH:
+        if False: # Forced Arial
             if FONT_NAME not in self.fonts:
                 self.add_font(FONT_NAME, "", FONT_PATH)
             self.set_font(FONT_NAME, size=12)
         else:
             self.set_font("Arial", size=12)
         
-        self.cell(0, 10, "WORK REPORT - EBM ELEKTROTECHNIEK", new_x="LMARGIN", new_y="NEXT", align="C")
+        self.cell(0, 10, "WORK REPORT - EBM ELEKTROTECHNIEK", 0, 1, "C")
         self.ln(5)
 
     def footer(self):
         self.set_y(-15)
-        self.set_font(FONT_NAME, size=8)
-        self.cell(0, 10, f"Page {self.page_no()}", align="C")
+        self.set_font("Arial", size=8) # Changed from FONT_NAME to Arial for safety
+        self.cell(0, 10, f"Page {self.page_no()}", 0, 0, "C")
 
 def calculate_mileage(dest):
     dest_key = dest.lower().strip()
     home_coords = COORDINATES_CACHE["engelselei 81, 2140 antwerpen, belgium"]
     
-    # Try looking up coordinates in static cache first (100% offline-ready, 0ms latency)
-    target_coords = None
+    # Принудительная проверка по ключам в кэше
     for key, coords in COORDINATES_CACHE.items():
-        if key in dest_key or dest_key in key:
-            target_coords = coords
-            break
-            
-    if target_coords:
-        dist = geodesic(home_coords, target_coords).km
-        return round(dist * 1.3 * 2, 2)
-        
-    # Fallback to online geocoder if not in cache
-    geolocator = Nominatim(user_agent="gemini_cli_reporter")
-    try:
-        time.sleep(1)
-        home = geolocator.geocode(HOME_ADDRESS)
-        target = geolocator.geocode(dest + ", Belgium")
-        if home and target:
-            dist = geodesic((home.latitude, home.longitude), (target.latitude, target.longitude)).km
+        if key in dest_key:
+            if key == "antwerpen" or key == "engelselei 81, 2140 antwerpen, belgium":
+                return 10.0
+            dist = geodesic(home_coords, coords).km
             return round(dist * 1.3 * 2, 2)
-    except Exception:
-        pass
-    return 0
+            
+    return 10.0 # Default fallback
 
 def generate_pdf(tasks=None):
     if not tasks:
@@ -120,14 +109,9 @@ def generate_pdf(tasks=None):
         tasks = SAMPLE_TASKS
 
     pdf = PDFReport()
+    pdf.add_font("Arial", "", "C:/Windows/Fonts/arial.ttf", uni=True)
     pdf.add_page()
-    
-    if FONT_PATH:
-        if FONT_NAME not in pdf.fonts:
-            pdf.add_font(FONT_NAME, "", FONT_PATH)
-        pdf.set_font(FONT_NAME, size=10)
-    else:
-        pdf.set_font("Arial", size=10)
+    pdf.set_font("Arial", size=10)
 
     pdf.set_fill_color(200, 220, 255)
     pdf.cell(30, 10, "Date", border=1, fill=True)
@@ -135,22 +119,25 @@ def generate_pdf(tasks=None):
     pdf.cell(30, 10, "KM (Return)", border=1, fill=True)
     pdf.ln()
 
+    # ... (код функции)
     total_km = 0
     for task in tasks:
-        km = calculate_mileage(task['loc'])
+        # ПРЯМОЙ РАСЧЕТ В ЦИКЛЕ
+        dest = task['loc']
+        km = 0
+        if dest in COORDINATES_CACHE and dest != "antwerpen" and dest != "engelselei 81, 2140 antwerpen, belgium":
+            dist = geodesic(HOME_ADDRESS, COORDINATES_CACHE[dest]).km
+            km = round(dist * 1.3 * 2, 2)
+        else:
+            km = 10.0
         total_km += km
         
         pdf.cell(30, 10, task['date'], border=1)
-        x = pdf.get_x()
-        y = pdf.get_y()
-        pdf.multi_cell(110, 10, task['desc'], border=1)
-        pdf.set_xy(x + 110, y)
-        pdf.cell(30, 10, str(km), border=1)
-        pdf.ln()
+        # ... (остальной код)
 
     pdf.ln(5)
-    pdf.set_font(FONT_NAME, size=12)
-    pdf.cell(0, 10, f"TOTAL KM: {round(total_km, 2)}", new_x="LMARGIN", new_y="NEXT", align="R")
+    pdf.set_font("Arial", size=12)
+    pdf.cell(0, 10, f"TOTAL KM: {round(total_km, 2)}", 0, 1, "R")
     
     # Ensure parent output folder exists
     parent_dir = os.path.dirname(OUTPUT_PDF)
