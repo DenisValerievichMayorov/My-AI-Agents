@@ -197,6 +197,11 @@ def query_openrouter_api(prompt):
 def run_agent():
     print(f"🚀 Агент [{DEVICE_NAME}] запущен (Dual Mode: Ollama/Gemini)...")
     
+    # Запуск Heartbeat Daemon в фоновом режиме
+    heartbeat_path = os.path.join(BASE_DIR, 'heartbeat.py')
+    subprocess.Popen(['python', heartbeat_path], creationflags=subprocess.CREATE_NEW_CONSOLE)
+    print("🫀 Heartbeat Daemon запущен в отдельном окне...")
+
     while True:
         if not os.path.exists(CHAT_FILE):
             time.sleep(5); continue
