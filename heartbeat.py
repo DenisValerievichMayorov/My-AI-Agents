@@ -29,6 +29,12 @@ def post_proactive_thought(event):
             msg = f"[System Event]: Регулярная проверка. Агенты, посмотрите календарь и почту Дениса (!google). Есть ли что-то важное на завтра?"
     
     if msg:
+        # Проверяем на дубликаты в чате, чтобы избежать дублирования при работе на нескольких узлах
+        if os.path.exists(CHAT_FILE):
+            with open(CHAT_FILE, 'r', encoding='utf-8') as f:
+                recent_chat = f.read()
+            if msg.strip() in recent_chat:
+                return
         with open(CHAT_FILE, 'a', encoding='utf-8') as f:
             f.write(f"\n{msg}\n")
         print(f"[{datetime.datetime.now().strftime('%H:%M:%S')}] 💡 Проактивная мысль отправлена.")

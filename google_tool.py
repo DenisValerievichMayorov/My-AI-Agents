@@ -50,8 +50,12 @@ def search_gmail(query):
         res = f"Результаты поиска в Gmail по '{query}':\n"
         for m in messages:
             msg = service.users().messages().get(userId='me', id=m['id']).execute()
+            headers = msg.get('payload', {}).get('headers', [])
+            subject = next((h['value'] for h in headers if h['name'] == 'Subject'), 'No Subject')
+            from_ = next((h['value'] for h in headers if h['name'] == 'From'), 'Unknown Sender')
+            date_ = next((h['value'] for h in headers if h['name'] == 'Date'), 'Unknown Date')
             snippet = msg.get('snippet')
-            res += f"- {snippet}\n"
+            res += f"- [{date_}] From: {from_}\n  Subject: {subject}\n  Snippet: {snippet}\n"
         return res
     except Exception as e: return f"Ошибка Gmail: {e}"
 
@@ -88,8 +92,20 @@ def list_drive():
     except Exception as e: return f"Ошибка Drive: {e}"
 
 if __name__ == '__main__':
-    print(list_calendar())
-    print("-" * 30)
-    print(list_drive())
-    print("-" * 30)
-    print(list_photos())
+    import sys
+    if len(sys.argv) > 1:
+        cmd = sys.argv[1]
+        if cmd == 'gmail' and len(sys.argv) > 2:
+            print(search_gmail(sys.argv[2]))
+        elif cmd == 'calendar':
+            print(list_calendar())
+        elif cmd == 'drive':
+            print(list_drive())
+        elif cmd == 'photos':
+            print(list_photos())
+    else:
+        print(list_calendar())
+        print("-" * 30)
+        print(list_drive())
+        print("-" * 30)
+        print(list_photos())
