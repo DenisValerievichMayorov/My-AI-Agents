@@ -52,14 +52,36 @@ def post_proactive_thought(event):
 def main():
     last_active_time = time.time()
     last_thought_time = 0 # Запуск мысли сразу при старте
+    last_fast_thought_time = 0 # Локальный быстрый анализ
     last_cleanup_time = 0 # Запуск очистки сразу при старте
     CLEANUP_INTERVAL = 3600 # 1 час
+    FAST_INTERVAL = 45 # каждые 45 секунд
     IDLE_TIMEOUT = 1800 # 30 минут
     print(f"[{datetime.datetime.now().strftime('%H:%M:%S')}] 🫀 Сердцебиение запущено...")
     
     while True:
         current_time = time.time()
         events = get_all_events()
+
+        # Быстрый локальный цикл мониторинга через Gemma
+        if current_time - last_fast_thought_time > FAST_INTERVAL:
+            try:
+                import reasoning_engine
+                chat_txt = ""
+                if os.path.exists(CHAT_FILE):
+                    with open(CHAT_FILE, 'r', encoding='utf-8') as f:
+                        lines = f.readlines()
+                        chat_txt = "".join(lines[-10:])
+                fast_res = reasoning_engine.run_fast_local_analysis(chat_txt)
+                if fast_res and "Всё в порядке" not in fast_res and "Все в порядке" not in fast_res:
+                     timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                     msg = f"[{timestamp}] [Gemma Local Monitor]: {fast_res}"
+                     with open(CHAT_FILE, 'a', encoding='utf-8') as f:
+                         f.write(f"\n{msg}\n")
+                     print(f"[{datetime.datetime.now().strftime('%H:%M:%S')}] ⚡ Локальный монитор заметил проблему.")
+            except Exception as e:
+                pass
+            last_fast_thought_time = current_time
         
         # Автоматическая очистка мусора и памяти раз в час
         if current_time - last_cleanup_time > CLEANUP_INTERVAL:

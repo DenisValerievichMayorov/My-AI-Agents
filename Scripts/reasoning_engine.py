@@ -2,6 +2,7 @@ import os
 import json
 import socket
 import datetime
+import time
 import urllib.request
 import requests
 
@@ -60,10 +61,12 @@ def query_openrouter(prompt, system_prompt="You are a helpful AI assistant.", mo
             ],
             "temperature": 0.3
         }
-        
+
         try:
             print(f"[OpenRouter] Запрос модели {selected_model}...")
+            start_time = time.time()
             response = requests.post(url, json=payload, headers=headers, timeout=15)
+            latency = time.time() - start_time
             if response.status_code == 200:
                 res_data = response.json()
                 choices = res_data.get('choices', [])
@@ -72,15 +75,47 @@ def query_openrouter(prompt, system_prompt="You are a helpful AI assistant.", mo
                     content = msg.get('content') if msg else None
                     if content:
                         content = content.strip()
-                        print(f"[OpenRouter] Успешный ответ от модели: {selected_model}!")
+                        speed_msg = f"ОТЛИЧНАЯ СКОРОСТЬ" if latency < 5 else f"МЕДЛЕННО"
+                        print(f"[OpenRouter] Успешный ответ от модели: {selected_model}! Время: {latency:.2f} сек ({speed_msg})")
                         return content
             else:
-                print(f"[OpenRouter] Ошибка {selected_model}: HTTP {response.status_code} - {response.text}")
+                print(f"[OpenRouter] Ошибка {selected_model}: HTTP {response.status_code} (Время: {latency:.2f} сек) - {response.text}")
         except Exception as e:
             print(f"[OpenRouter] Ошибка при запросе {selected_model}: {e}")
-            
+
     return None
 
+def query_local_ollama(prompt, system_prompt="You are a helpful AI assistant.", model="gemma"):
+    """Запрашивает локальную модель через Ollama для быстрых проверок."""
+    url = "http://localhost:11434/api/chat"
+    payload = {
+        "model": model,
+        "messages": [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": prompt}
+        ],
+        "stream": False
+    }
+    try:
+        start_time = time.time()
+        print(f"[Local Ollama] Запрос к локальной модели {model}...")
+        response = requests.post(url, json=payload, timeout=10)
+        latency = time.time() - start_time
+        if response.status_code == 200:
+            res_data = response.json()
+            content = res_data.get("message", {}).get("content", "").strip()
+            if content:
+                print(f"[Local Ollama] Успешно! Время: {latency:.2f} сек")
+                return content
+    except Exception as e:
+        print(f"[Local Ollama] Ошибка: {e}")
+    return None
+
+def run_fast_local_analysis(chat_log_txt=""):
+    """Быстрый локальный анализ через Ollama для мониторинга 'на лету'."""
+    system_prompt = "Ты — локальный сторожевой агент. Твоя задача кратко проанализировать лог. Если есть срочная проблема - напиши 1 предложение. Иначе ответь 'Всё в порядке'."
+    prompt = f"Последние сообщения:\n{chat_log_txt}\n\nСделай быстрый вывод."
+    return query_local_ollama(prompt, system_prompt, model="gemma")
 def query_deep_reasoning(prompt, system_prompt, model="nvidia/nemotron-3-super-120b-a12b:free"):
     """Реализует System 2 Multi-Turn Self-Correction (глубокие рассуждения с самокритикой)
     для исключения сухой констатации фактов и выработки по-настоящему умных решений."""
