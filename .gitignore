@@ -13,6 +13,18 @@ gemini_settings_backup.json
 client_secret.json
 oauth_creds.json
 google_accounts.json
+client_secret_*.json
+credentials_*.json
+downloads/
+.npm/
+Keys/
+*.bak*
+*.log
+logs/
+.pi/
+dist/
+Scripts/.*
+*.offset
 
 # Logs and Private Data
 ai_chat_room.txt

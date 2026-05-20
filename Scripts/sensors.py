@@ -5,6 +5,7 @@ import datetime
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DEVICE_NAME = socket.gethostname().lower()
+GOOGLE_TASKS_ENABLED = os.environ.get("GMC_GOOGLE_TASKS", "").lower() in ("1", "true", "yes", "on")
 
 def is_android():
     return 'motorola' in DEVICE_NAME or os.name != 'nt' and 'penguin' not in DEVICE_NAME
@@ -140,7 +141,7 @@ def check_mail():
 
     try:
         import google_tool
-        creds = google_tool.get_creds()
+        creds = google_tool.get_creds(['https://www.googleapis.com/auth/gmail.readonly'])
         if creds:
             from googleapiclient.discovery import build
             service = build('gmail', 'v1', credentials=creds)
@@ -215,9 +216,12 @@ def check_whatsapp():
 
 def check_tasks():
     """Проверяет активные задачи в Google Tasks."""
+    if not GOOGLE_TASKS_ENABLED:
+        return []
+
     try:
         import google_tool
-        creds = google_tool.get_creds()
+        creds = google_tool.get_creds(['https://www.googleapis.com/auth/tasks'])
         if creds:
             from googleapiclient.discovery import build
             service = build('tasks', 'v1', credentials=creds)
@@ -240,5 +244,6 @@ def get_all_events():
     all_events.extend(check_mail())
     all_events.extend(check_photos())
     all_events.extend(check_whatsapp())
-    all_events.extend(check_tasks())
+    if GOOGLE_TASKS_ENABLED:
+        all_events.extend(check_tasks())
     return all_events

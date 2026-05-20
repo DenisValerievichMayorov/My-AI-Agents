@@ -80,13 +80,13 @@ class PDFReport(FPDF):
         else:
             self.set_font("Arial", size=12)
         
-        self.cell(0, 10, "WORK REPORT - EBM ELEKTROTECHNIEK", 0, 1, "C")
+        self.cell(0, 10, "WORK REPORT - EBM ELEKTROTECHNIEK", 0, new_x="LMARGIN", new_y="NEXT", align="C")
         self.ln(5)
 
     def footer(self):
         self.set_y(-15)
         self.set_font("Arial", size=8) # Changed from FONT_NAME to Arial for safety
-        self.cell(0, 10, f"Page {self.page_no()}", 0, 0, "C")
+        self.cell(0, 10, f"Page {self.page_no()}", 0, new_x="RIGHT", new_y="TOP", align="C")
 
 def calculate_mileage(dest):
     dest_key = dest.lower().strip()
@@ -109,7 +109,7 @@ def generate_pdf(tasks=None):
         tasks = SAMPLE_TASKS
 
     pdf = PDFReport()
-    pdf.add_font("Arial", "", "C:/Windows/Fonts/arial.ttf", uni=True)
+    pdf.add_font("Arial", "", "C:/Windows/Fonts/arial.ttf")
     pdf.add_page()
     pdf.set_font("Arial", size=10)
 
@@ -122,14 +122,8 @@ def generate_pdf(tasks=None):
     # ... (код функции)
     total_km = 0
     for task in tasks:
-        # ПРЯМОЙ РАСЧЕТ В ЦИКЛЕ
         dest = task['loc']
-        km = 0
-        if dest in COORDINATES_CACHE and dest != "antwerpen" and dest != "engelselei 81, 2140 antwerpen, belgium":
-            dist = geodesic(HOME_ADDRESS, COORDINATES_CACHE[dest]).km
-            km = round(dist * 1.3 * 2, 2)
-        else:
-            km = 10.0
+        km = calculate_mileage(dest)
         total_km += km
         
         pdf.cell(30, 10, task['date'], border=1)
@@ -137,7 +131,7 @@ def generate_pdf(tasks=None):
 
     pdf.ln(5)
     pdf.set_font("Arial", size=12)
-    pdf.cell(0, 10, f"TOTAL KM: {round(total_km, 2)}", 0, 1, "R")
+    pdf.cell(0, 10, f"TOTAL KM: {round(total_km, 2)}", 0, new_x="LMARGIN", new_y="NEXT", align="R")
     
     # Ensure parent output folder exists
     parent_dir = os.path.dirname(OUTPUT_PDF)

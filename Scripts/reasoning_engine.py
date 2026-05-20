@@ -34,6 +34,7 @@ OLLAMA_ROLE_MODELS = OLLAMA_CONFIG.get("role_models", {})
 OLLAMA_MODEL_PREFERENCES = [
     OLLAMA_MODEL,
     *OLLAMA_CONFIG.get("preferred_chat_models", []),
+    "gemma4",
     "gemma3",
     "gemma2:2b",
     "llama3.2",
@@ -42,7 +43,7 @@ OLLAMA_MODEL_PREFERENCES = [
 ]
 OLLAMA_MODEL_PREFERENCES = list(dict.fromkeys(OLLAMA_MODEL_PREFERENCES))
 OPENROUTER_HEAVY_ENABLED = os.environ.get("GMC_OPENROUTER_HEAVY", "").lower() in ("1", "true", "yes", "on")
-DEFAULT_MODEL = "deepseek/deepseek-v4-flash:free"
+DEFAULT_MODEL = "google/gemma-4-31b-it:free"
 OPENROUTER_TIMEOUT = float(os.environ.get("GMC_OPENROUTER_TIMEOUT", "25"))
 HEAVY_MODEL_TIMEOUT = float(os.environ.get("GMC_HEAVY_MODEL_TIMEOUT", "90"))
 

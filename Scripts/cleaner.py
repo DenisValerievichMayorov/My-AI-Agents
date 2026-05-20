@@ -4,6 +4,7 @@ import psutil
 import datetime
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+ALLOW_PROCESS_KILL = os.environ.get("GMC_CLEANER_KILL_CHROME", "").lower() in ("1", "true", "yes", "on")
 
 def get_file_size_mb(path):
     try:
@@ -75,6 +76,10 @@ def truncate_logs():
 
 def kill_zombie_chromes():
     """Ищет и уничтожает зомби-процессы chrome.exe, которые не привязаны к активному мосту Node."""
+    if not ALLOW_PROCESS_KILL:
+        print("[Cleaner] Kill Chrome отключен. Для включения установите GMC_CLEANER_KILL_CHROME=1.")
+        return 0
+
     print("[Cleaner] Оптимизация оперативной памяти (поиск зомби-процессов Chrome)...")
     killed_count = 0
     

@@ -1,55 +1,64 @@
 # PLAN.md
 
 ## Objective
-1. **Fix the Infinite Chat Loop:** Resolve the tennis-match loop of `"Принято. Ожидаю новых инструкций."` in `ai_chat_room.txt` between the Windows host and the Termux-Phone node by improving `agent_listener.py`.
-2. **Diagnose and Fix Gemini CLI:** Check the status of `gemini` command line tool on the Windows host and ensure it executes successfully.
-3. **Automate Remote Nodes Setup:** Connect via SSH from Windows to Termux (`100.87.207.25`) and Chromebook (`100.106.187.105`) to configure public keys, check services, and generate `Termux_Report.md` and `Chromebook_Report.md`.
+Reorganize and clean up the `C:\Users\anton\Sync` folder structure to strictly adhere to the `SYNC_STRUCTURE.md` protocol:
+1. **Consolidate `AGENTS_COMPLAINTS.md`:** Merge the massive root `AGENTS_COMPLAINTS.md` (294 KB), scripts folder `AGENTS_COMPLAINTS.md` (7.6 KB), and log folder `AGENTS_COMPLAINTS.md` (225 KB) into a single unified file inside `C:\Users\anton\Sync\Reports\AGENTS_COMPLAINTS.md`.
+2. **Redirect Active Script Writes:** Update `agent_listener.py`, `sensors.py`, and `reasoning_engine.py` to:
+   - Write/read all log files (like `agent.log`, `heartbeat.log`, `whatsapp_bridge.log`) directly in `C:\Users\anton\Sync\logs/` instead of `/Scripts/`.
+   - Write/read database/chat records (like `ai_chat_room.txt` and `whatsapp_messages.txt`) directly in `C:\Users\anton\Sync\Data/` instead of `/Scripts/`.
+   - Write agent complaints directly to `/Reports/AGENTS_COMPLAINTS.md`.
+3. **Delete Redundant Duplicates:** Safely remove duplicate files from the root and `/Scripts/` directories once moved/redirected.
+4. **Merge Logs Directories:** Configure `cleaner.py` and all other scripts to use the unified `C:\Users\anton\Sync\logs/` folder instead of creating a secondary `/Scripts/logs/` folder.
 
 ## Context, Memory & Existing Tools
-- **Global Memory & Rules:** Defined in `c:\Users\anton\GEMINI.md` and `.clinerules`.
-- **GMC Configuration:** IP addresses, ports, and instructions are in `c:\Users\anton\Sync\GMC_Network_Control.md`.
-- **SSH Private Key:** `c:\Users\anton\Sync\chromebook_ssh_key` is available.
-- **Python Environment:** Windows host has `py` installed.
+- **Rule of Structure:** `SYNC_STRUCTURE.md` strictly forbids putting non-config files in the root of `C:\Users\anton\Sync`.
+- **Files Involved:**
+  - `agent_listener.py`, `sensors.py`, `reasoning_engine.py`, `cleaner.py`, `test_dependencies.py`.
+- **Duplicates to Remove:**
+  - Root: `AGENTS_COMPLAINTS.md`, `agent.log`, `ai_chat_room.txt`, `client_secret.json`, `credentials.json`, `google_token.json`, `whatsapp_messages.txt`, `PLAN.md` (will be moved to `/Docs/PLAN.md` or updated).
+  - Scripts: `AGENTS_COMPLAINTS.md`, `ai_chat_room.txt` (which is 8 MB, must be moved to `/Data`), `whatsapp_messages.txt`.
 
-### Current Status (2026-05-17)
-- **Diagnose Gemini CLI:** Completed. CLI is functional on Windows.
-- **Fix agent_listener.py:** Improved with better de-duplication and stop-phrases.
-- **Fix get_gmail.py loop:** Modified to search only for `UNSEEN` emails and updated `sensors.py` for better parsing.
-- **Network Check:** SSH to Chromebook and Termux verified.
-- **Cleanup ai_chat_room.txt:** Completed, sync conflicts removed.
-- **Sync Automation:** Created `auto-sync.sh` on Chromebook and updated `INSTRUCTIONS_WINDOWS.md`.
-- **Chromebook Report:** Updated with sync automation status.
-- **OCR Werkraport:** Completed. Work schedule for Week 21 (May 18-24) extracted.
-- **Unify Skills:** Successfully merged `~/.gemini/skills` and `~/Sync/.gemini/skills`. Symlink created in Termux.
-- **Antigravity CLI:** Confirmed `https://antigravity.google/download/linux/antigravity.deb` is 404. Local deb is corrupted. Re-download pending correct URL.
-- **Antigravity Diagnosis:** Identified `Setup/antigravity_arm64.deb` as a corrupted HTML file. Need valid binary.
-- **Skill Conflict Diagnosis:** Confirmed duplicate skills in `~/.gemini/skills` and `~/Sync/.gemini/skills` causing errors.
+## Step-by-Step Strategy
 
-### Step 3: Cleanup `ai_chat_room.txt` [DONE]
-- Remove the repetitive loops of duplicate messages from `ai_chat_room.txt`, keeping only the system events and the last relevant status.
+### Step 1: Merge and Consolidate AGENTS_COMPLAINTS.md [TODO]
+- Read the content of the three complaints files.
+- Combine their historical contents into a single unified log, sorted/merged cleanly.
+- Write the final consolidated file to `C:\Users\anton\Sync\Reports\AGENTS_COMPLAINTS.md`.
+- Delete `C:\Users\anton\Sync\AGENTS_COMPLAINTS.md`, `C:\Users\anton\Sync\Scripts\AGENTS_COMPLAINTS.md`, and `C:\Users\anton\Sync\logs\AGENTS_COMPLAINTS.md`.
 
-### Step 4: Check SSH Connectivity to Remote Nodes [DONE]
-- Test SSH connection to `Termux-Phone` (`100.87.207.25:8022`).
-- Test SSH connection to `Chromebook` (`100.106.187.105:22` as `denisvalerievichmayorov1`).
+### Step 2: Relocate Data Files to `/Data` [TODO]
+- Move the active 8 MB chat log `ai_chat_room.txt` from `/Scripts/` to `C:\Users\anton\Sync\Data\ai_chat_room.txt`.
+- Move `C:\Users\anton\Sync\whatsapp_messages.txt` to `C:\Users\anton\Sync\Data\whatsapp_messages.txt`.
+- Delete legacy duplicate `ai_chat_room.txt` from the root of Sync.
 
-- **Termux Phone:** [IN PROGRESS]
-  - Verify tailscale status. (CLI missing)
-  - Setup SSH authorized keys using the public key. [DONE]
-  - Align Termux Background Daemons: Kill legacy processes running in `~`, delete stale files, create symbolic links to `~/Sync/` files, and restart the production daemons to guarantee they execute our latest requests-based optimizations. [TODO]
-  - Re-download and install valid `antigravity-cli`. [TODO]
-  - Write `Sync/Termux_Report.md` with status. [UPDATED]
-- **Chromebook:** [IN PROGRESS]
-  - Verify `sshd` config on `tailscale0`.
-  - Setup SSH authorized keys using `chromebook_ssh_key.pub`.
-  - Resolve Skill Conflicts: Unify `~/.gemini/skills` with `~/Sync/.gemini/skills`. [TODO]
-  - Check `rclone` Google Drive sync.
-  - Write `Sync/Chromebook_Report.md`.
+### Step 3: Update Paths in Active Scripts [TODO]
+- **`agent_listener.py`**:
+  - Update `CHAT_FILE` to `C:\Users\anton\Sync\Data\ai_chat_room.txt`.
+  - Update `LIVE_CHAT_FILE` to `C:\Users\anton\Sync\Data\.gmc_live_chat.txt` or `.gmc_live_chat.txt` in `/Data`.
+  - Update `COMMAND_FILE` to `C:\Users\anton\Sync\Data\agent_commands.txt`.
+  - Update `COMMAND_OFFSET_FILE` to `C:\Users\anton\Sync\Data\.agent_commands.offset`.
+  - Update `CONTROL_FILE` to `C:\Users\anton\Sync\Data\agent_control.json`.
+  - Update `complaints_file` to `C:\Users\anton\Sync\Reports\AGENTS_COMPLAINTS.md`.
+  - Update log file paths (`agent.log`, `heartbeat.log`, etc.) to point to `C:\Users\anton\Sync\logs/`.
+  - Update `wa_file` to `C:\Users\anton\Sync\Data\whatsapp_messages.txt`.
+- **`sensors.py`**:
+  - Update `chat_file` and `wa_file` paths to look inside `C:\Users\anton\Sync\Data/`.
+  - Update log paths to `C:\Users\anton\Sync\logs/`.
+- **`reasoning_engine.py`**:
+  - Update `chat_path` and `wa_path` to `/Data/`.
+- **`cleaner.py`**:
+  - Update targeted log files list to search directly in `C:\Users\anton\Sync\logs/` instead of `/Scripts/`.
+  - Remove references to `/Scripts/logs`.
+- **`test_dependencies.py`**:
+  - Update dependency verification path references.
 
-### New Step 6: System Optimization
-- **Unify Skills:** Move all skills to `~/Sync/.gemini/skills` and create symlinks in `~/.gemini/skills` to ensure synchronization and avoid duplication errors.
-- **Self-Healing Geolocation Fallback:** Implement an IP-based geolocation fallback in `get_loc_direct.py` and update `gps_logger.sh` to prevent Location crashes on Termux's Google Play build.
-- **Fix Antigravity:** Locate or request the correct source for `antigravity-cli` for arm64 (Termux).
+### Step 4: Remove Redundant OAuth Duplicates [TODO]
+- Delete `google_token.json`, `client_secret.json`, and `credentials.json` from the root of `C:\Users\anton\Sync` (keeping the primary functional ones safely in `C:\Users\anton\Sync\Scripts\`).
+
+### Step 5: Verify & Restart Daemons [TODO]
+- Compile check all updated scripts (`python -m py_compile Scripts/*.py`).
+- Safely restart the `agent_listener.py` daemon so it operates with the clean directory paths.
 
 ## Self-Healing Tools
-- Run `py agent_listener.py` diagnostics locally and verify no syntax or runtime errors occur.
-- Run tests on `sensors.py` and `heartbeat.py` to ensure their integrity.
+- Syntax and compilation check: `python -m py_compile Scripts/agent_listener.py` and other modified scripts.
+- Runtime sanity checking by running the listener logic and checking that new logs are written to the right locations.

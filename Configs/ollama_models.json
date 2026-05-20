@@ -1,0 +1,27 @@
+{
+  "host": "http://localhost:11434",
+  "remote_host": "http://100.72.214.118:11434",
+  "default_chat_model": "gemma3:latest",
+  "role_models": {
+    "dispatcher": "gemma3:latest",
+    "code": "qwen2.5-coder:7b",
+    "general": "llama3.2:latest",
+    "fallback": "llama3:8b"
+  },
+  "preferred_chat_models": [
+    "gemma3:latest",
+    "gemma2:2b",
+    "llama3.2:latest",
+    "qwen2.5-coder:7b",
+    "llama3:8b"
+  ],
+  "embedding_model": "nomic-embed-text:latest",
+  "installed_models": [
+    "gemma3:latest",
+    "gemma2:2b",
+    "nomic-embed-text:latest",
+    "llama3:8b",
+    "qwen2.5-coder:7b",
+    "llama3.2:latest"
+  ]
+}
