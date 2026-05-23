@@ -1,0 +1,10 @@
+{
+  "id": "19d8878ee6b3f5e2",
+  "threadId": "19d8878ee6b3f5e2",
+  "snippet": "@DenisValerievichMayorov, your fine-grained personal access token is expiring soon. Hey DenisValerievichMayorov! We noticed your fine-grained personal access token (GeminiWeatherAction), will expire in",
+  "subject": "[GitHub] Your fine-grained personal access token is about to expire",
+  "from": "GitHub <noreply@github.com>",
+  "date": "Mon, 13 Apr 2026 13:11:59 -0700",
+  "body": "Hi DenisValerievichMayorov,\r\n\r\nWe noticed your fine-grained personal access token \"GeminiWeatherAction\", will expire in 7 days.\r\n\r\nIf this token is still needed, visit https://github.com/settings/personal-access-tokens/12647756/regenerate to generate an equivalent.\r\n\r\nIf you run into problems, please contact support by visiting https://github.com/contact\r\n\r\nThanks,\r\nThe GitHub Team\r\n",
+  "attachments": []
+}

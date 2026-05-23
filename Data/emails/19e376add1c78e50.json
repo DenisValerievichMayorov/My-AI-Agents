@@ -1,0 +1,10 @@
+{
+  "id": "19e376add1c78e50",
+  "threadId": "19e376add1c78e50",
+  "snippet": "Hello Denys, You&#39;ve hit your retrieval requests (search + get all) limit. Retrieval requests are now returning 4xx errors. Your existing memories are safe and unaffected — upgrade or enable",
+  "subject": "Mem0 — Your retrieval quota has been exceeded",
+  "from": "Mem0 <notifications@mem0.dev>",
+  "date": "Sun, 17 May 2026 19:30:10 +0000",
+  "body": "Hello Denys,\r\n\r\nYou've hit your retrieval requests (search + get all) limit. Retrieval requests are now returning 4xx errors. Your existing memories are safe and unaffected — upgrade or enable overages to restore access immediately.\r\n\r\nThis only affects search and get all API calls — your addition requests are unaffected and will continue to work normally.\r\n\r\nAddition requests: 88 / 10000 (0%)\r\nRetrieval requests (search + get all): 1000 / 1000 (100%)\r\nPlan: FREE\r\n\r\nUpgrade to Restore Access https://app.mem0.ai/dashboard/usage-and-billing\r\n\r\n\r\n\r\nNeed the fastest fix? Enabling overages https://app.mem0.ai/dashboard/usage-and-billing restores access instantly at pay-as-you-go rates. If you'd prefer to wait, your quota resets on the date above.\r\n\r\n----------------------------------------\r\n\r\nMem0 will never email you and ask you to disclose or verify your password, credit card, or banking account number.\r\n\r\n© 2026 Mem0. All rights reserved.",
+  "attachments": []
+}

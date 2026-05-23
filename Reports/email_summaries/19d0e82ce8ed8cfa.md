@@ -1,0 +1,44 @@
+# Email Summary: Ontdek nieuwe panden 🏠
+
+**From:** De Cock Tine <tine.de.cock@quares-trevi.be>
+**Date:** Sat, 21 Mar 2026 04:49:06 +0100
+
+## Content
+Verkopen. Verhuren. Vertrouwen. 
+ Beste Meneer en Mevrouw Maiorov,
+
+Op basis van uw voorkeuren selecteerden wij zorgvuldig enkele panden die perfect aansluiten bij uw profiel. 
+  
+ Wilt u meer informatie of een bezoek inplannen? Laat het ons weten door uw voorkeurdata mee te geven. We nemen vervolgens spoedig contact met u op om de afspraak in te plannen. 
+  
+ Niet helemaal uw ding? Geen probleem! Laat het ons weten, dan zoeken we verder tot we wél die perfecte match voor u vinden. 
+  
+ 
+
+Met vriendelijke groeten,
+
+Volledig gerenoveerd 1-slaapkamerappartement € 975 
+ 
+m2 
+1 
+1 
+
+
+Turnhoutsebaan 225 Bus 1V, 2140 Antwerpen Borgerhout 
+ Ontdek dit prachtig volledig gerenoveerde 1-slaapkamerappartement, ideaal gelegen op de levendige Turnhoutsebaan. Het appartement werd afgewerkt met kwalitatieve materialen en combineert modern comfort met stedelijk wonen.
+
+De woning beschikt over een lichtrijke leefruimte, een volledig uitgeruste keuken, een ruime slaapkamer en een hedendaagse badkamer. Dankzij de recente renovatie geniet u van een instapklaar appartement met een energiezuinige en stijlvolle afwerking.
+
+Gelegen in een bruisende buurt met winkels, openbaar vervoer en alle voorzieningen op wandelafstand, is dit appartement ideaal voor wie comfortabel in de stad wil wonen. 
+ " width="125" height="125" />  Quares Antwerpen
++32 3 294 50 57 
+ info@quares.be 
+ Museumstraat 50, 2000 Antwerpen 
+ www.quares.be 
+ Mis niets: volg Quares op social media! 
+ www.quares.be 
+ Uitschrijven - Gegevens aanpassen
+ 
+ Museumstraat 50, 2000 Antwerpen - +32 3 294 50 57 
+  
+ 

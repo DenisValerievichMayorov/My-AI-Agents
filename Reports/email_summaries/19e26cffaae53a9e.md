@@ -1,0 +1,22 @@
+# Email Summary: Оповещение системы безопасности
+
+**From:** Google <no-reply@accounts.google.com>
+**Date:** Thu, 14 May 2026 14:07:03 GMT
+
+## Content
+[image: Google]
+Создан пароль приложения, который будет использоваться для входа в ваш
+аккаунт
+
+
+denisvalerievichmayorov1@gmail.com
+Если вы не создавали этот пароль для приложения "Gemini CLI", возможно,
+вашим аккаунтом пользуется кто-то ещё. Проверьте и защитите свой аккаунт
+прямо сейчас.
+Посмотреть действия
+<https://accounts.google.com/AccountChooser?Email=denisvalerievichmayorov1@gmail.com&continue=https://myaccount.google.com/alert/nt/1778767623767?rfn%3D20%26rfnc%3D1%26eid%3D-384397247309323541%26et%3D0>
+Вы также можете посмотреть действия, связанные с безопасностью, на этой
+странице:
+https://myaccount.google.com/notifications
+Это сообщение о важных изменениях в вашем аккаунте и сервисах Google.
+© 2026 Google Ireland Ltd., Gordon House, Barrow Street, Dublin 4, Ireland

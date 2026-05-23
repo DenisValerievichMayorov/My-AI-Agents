@@ -1,0 +1,19 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:Teamleader
+BEGIN:VEVENT
+CLASS:PUBLIC
+METHOD:REQUEST
+UID:meeting25654460@teamleader.be
+DTSTAMP:20260513T073600Z
+ORGANIZER;CN="Denys Maiorov";RSVP=TRUE:mailto:denisvaleriev
+ ichmayorov1@gmail.com
+ATTENDEE;CN="Asaniverko BV";RSVP=TRUE:mailto:fatima@asanive
+ rko.be
+DTSTART:20260605T073000Z
+DTEND:20260605T090000Z
+SUMMARY:Y - HS -  R-55923/1 - Onderhoud CV - Maiorov - 2140
+  - Borgerhout
+LOCATION:Engelselei 89 bus 6, 2140 BORGERHOUT, België
+END:VEVENT
+END:VCALENDAR

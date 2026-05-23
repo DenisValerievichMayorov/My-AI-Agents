@@ -1,0 +1,23 @@
+{
+  "id": "19c8c5fa6b8d9110",
+  "threadId": "19c8c5f386efc1bc",
+  "snippet": "Dear Mrs. Worms, Good afternoon. Please find attached the completed form from my side with the meter readings, as well as photos of the meters. If you need any additional information, please let me",
+  "subject": "Meter readings and completed form",
+  "from": "Denys Maiorov <denisvalerievichmayorov1@gmail.com>",
+  "date": "Mon, 23 Feb 2026 22:20:06 +0100",
+  "body": "Dear Mrs. Worms,\r\n\r\nGood afternoon.\r\n\r\nPlease find attached the completed form from my side with the meter\r\nreadings, as well as photos of the meters.\r\n\r\nIf you need any additional information, please let me know.\r\n\r\nThank you in advance.\r\n\r\nKind regards,\r\nDenys Maiorov\r\n",
+  "attachments": [
+    {
+      "filename": "PXL_20260223_160924235.RAW-01.COVER.jpg",
+      "path": "/data/data/com.termux/files/home/Sync/Data/email_attachments/19c8c5fa6b8d9110_PXL_20260223_160924235.RAW-01.COVER.jpg"
+    },
+    {
+      "filename": "PXL_20260223_160853095.RAW-01.COVER.jpg",
+      "path": "/data/data/com.termux/files/home/Sync/Data/email_attachments/19c8c5fa6b8d9110_PXL_20260223_160853095.RAW-01.COVER.jpg"
+    },
+    {
+      "filename": "Scan_20260223-2212.pdf",
+      "path": "/data/data/com.termux/files/home/Sync/Data/email_attachments/19c8c5fa6b8d9110_Scan_20260223-2212.pdf"
+    }
+  ]
+}

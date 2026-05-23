@@ -179,21 +179,104 @@ def list_photos():
         return res
     except Exception as e: return f"Ошибка Фото: {e}"
 
-def list_drive():
+def list_drive(all_files=False):
     creds = get_creds(['https://www.googleapis.com/auth/drive.readonly'])
     if not creds: return "Ошибка: Нет доступа к Google Drive."
     try:
         service = build('drive', 'v3', credentials=creds)
-        results = service.files().list(
-            pageSize=5, fields="nextPageToken, files(id, name, mimeType)").execute()
-        items = results.get('files', [])
-        if not items: return "Файлы в Drive не найдены."
-        
-        res = "Последние файлы в Google Drive:\n"
-        for item in items:
+        files = []
+        page_token = None
+        while True:
+            results = service.files().list(
+                pageSize=100 if all_files else 5, 
+                fields="nextPageToken, files(id, name, mimeType)",
+                pageToken=page_token).execute()
+            items = results.get('files', [])
+            files.extend(items)
+            page_token = results.get('nextPageToken')
+            if not page_token or not all_files:
+                break
+        if not files: return "Файлы в Drive не найдены."
+        title = "Все файлы в Google Drive:" if all_files else "Последние файлы в Google Drive:"
+        res = title + "\n"
+        for item in files:
             res += f"- {item.get('name')} ({item.get('mimeType')})\n"
         return res
     except Exception as e: return f"Ошибка Drive: {e}"
+
+def send_gmail(subject, to, body):
+    creds = get_creds(['https://www.googleapis.com/auth/gmail.compose'])
+    if not creds:
+        return "Ошибка: Нет прав для отправки Gmail."
+        
+    try:
+        import base64
+        from email.message import EmailMessage
+        service = build('gmail', 'v1', credentials=creds)
+        
+        message = EmailMessage()
+        message.set_content(body)
+        message['To'] = to
+        message['Subject'] = subject
+        
+        encoded_message = base64.urlsafe_b64encode(message.as_bytes()).decode()
+        send_message = {
+            'raw': encoded_message
+        }
+        sent = service.users().messages().send(userId="me", body=send_message).execute()
+        return f"✅ Письмо успешно отправлено! ID сообщения: {sent.get('id')}"
+    except Exception as e:
+        return f"❌ Ошибка при отправке: {e}"
+
+def create_calendar_event(summary, start_time, end_time, description=None):
+    creds = get_creds(['https://www.googleapis.com/auth/calendar'])
+    if not creds:
+        # Пытаемся получить расширенный scope если readonly не хватает
+        creds = get_creds(['https://www.googleapis.com/auth/calendar.readonly'])
+        if not creds: return "Ошибка: Нет доступа к Календарю."
+
+    try:
+        service = build('calendar', 'v3', credentials=creds)
+        
+        # Простая обработка дат
+        if len(start_time) == 10: # YYYY-MM-DD
+            start = {'date': start_time}
+            end = {'date': end_time}
+        else:
+            start = {'dateTime': start_time + 'Z'}
+            end = {'dateTime': end_time + 'Z'}
+
+        event = {
+            'summary': summary,
+            'description': description,
+            'start': start,
+            'end': end,
+        }
+        
+        event = service.events().insert(calendarId='primary', body=event).execute()
+        return f"✅ Событие '{summary}' успешно добавлено в Календарь! Link: {event.get('htmlLink')}"
+    except Exception as e:
+        return f"❌ Ошибка Календаря: {e}"
+
+def delete_task(task_id, tasklist_id='@default'):
+    creds = get_creds(['https://www.googleapis.com/auth/tasks'])
+    if not creds: return "Ошибка: Нет доступа к Google Tasks."
+    try:
+        service = build('tasks', 'v1', credentials=creds)
+        service.tasks().delete(tasklist=tasklist_id, task=task_id).execute()
+        return f"✅ Задача {task_id} успешно удалена."
+    except Exception as e: return f"❌ Ошибка при удалении: {e}"
+
+def complete_task(task_id, tasklist_id='@default'):
+    creds = get_creds(['https://www.googleapis.com/auth/tasks'])
+    if not creds: return "Ошибка: Нет доступа к Google Tasks."
+    try:
+        service = build('tasks', 'v1', credentials=creds)
+        task = service.tasks().get(tasklist=tasklist_id, task=task_id).execute()
+        task['status'] = 'completed'
+        service.tasks().update(tasklist=tasklist_id, task=task_id, body=task).execute()
+        return f"✅ Задача '{task.get('title')}' отмечена как выполненная."
+    except Exception as e: return f"❌ Ошибка при выполнении: {e}"
 
 if __name__ == '__main__':
     import sys
@@ -202,16 +285,28 @@ if __name__ == '__main__':
         if cmd == 'gmail' and len(sys.argv) > 2:
             print(search_gmail(sys.argv[2]))
         elif cmd == 'draft' and len(sys.argv) > 4:
-            print(create_gmail_draft(sys.argv[2], sys.argv[3], sys.argv[4]))
+            body = sys.argv[4].replace('\\n', '\n')
+            print(create_gmail_draft(sys.argv[2], sys.argv[3], body))
+        elif cmd == 'send' and len(sys.argv) > 4:
+            body = sys.argv[4].replace('\\n', '\n')
+            print(send_gmail(sys.argv[2], sys.argv[3], body))
+        elif cmd == 'event' and len(sys.argv) > 4:
+            desc = sys.argv[5] if len(sys.argv) > 5 else None
+            print(create_calendar_event(sys.argv[2], sys.argv[3], sys.argv[4], desc))
         elif cmd == 'task' and len(sys.argv) > 2:
             notes = sys.argv[3] if len(sys.argv) > 3 else None
             print(add_task(sys.argv[2], notes))
+        elif cmd == 'delete' and len(sys.argv) > 2:
+            print(delete_task(sys.argv[2]))
+        elif cmd == 'complete' and len(sys.argv) > 2:
+            print(complete_task(sys.argv[2]))
         elif cmd == 'tasks':
             print(list_tasks())
         elif cmd == 'calendar':
             print(list_calendar())
         elif cmd == 'drive':
-            print(list_drive())
+            all_flag = len(sys.argv) > 2 and sys.argv[2] in ['--all', '-a']
+            print(list_drive(all_files=all_flag))
         elif cmd == 'photos':
             print(list_photos())
     else:

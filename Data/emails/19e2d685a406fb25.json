@@ -1,0 +1,10 @@
+{
+  "id": "19e2d685a406fb25",
+  "threadId": "19e2d685a406fb25",
+  "snippet": "Hi there Four weeks ago we shipped the token-efficient memory algorithm and called out where it fell short: temporal reasoning, multi-session reasoning, and event ordering. This week, we released two",
+  "subject": "Mem0's Token-Efficient Memory Algorithm Now Has Temporal Reasoning",
+  "from": "Mem0 <taranjeet@mem0.io>",
+  "date": "Fri, 15 May 2026 20:51:13 +0000",
+  "body": "Hi there \n Four weeks ago we shipped the token-efficient memory algorithm and called out where it fell short: temporal reasoning, multi-session reasoning, and event ordering. \n This week, we released two new capabilities to close that gap, on the same &lt;7,000 token retrieval budget. \n - Temporal Reasoning Every memory now carries a time signature. Search understands what's current, what's historical, and what's upcoming. State keys link evolving facts (jobs, preferences, relationships) so the timeline stays clean. \n- Memory Decay Recently used memories get a soft boost, up to 1.5x. Idle ones get gently dampened, down to 0.3x. Nothing is deleted or hidden. A stale-but-relevant memory still surfaces when it's the best match. \n What the numbers look like: \n - LongMemEval: 93.4% → 94.4% \n- LoCoMo: 91.6% → 92.5% \n- LongMemEval temporal reasoning: +3.8 points \n- LoCoMo open-domain: +6.3 points \n A few examples of what this would fix: a coding agent resurfacing an old side project when asked about \"this week's work\". A personal assistant citing a dietary preference the user changed a month ago. A CRM agent quoting terms that were upgraded two months ago. The memories were already being stored correctly, but the retrieval now has a sense of time. \n The two new features are platform-only for now. Temporal Reasoning is on by default for new projects. Memory Decay can be toggled from the dashboard or SDK. \n Read more: \n - Start free at app.mem0.ai \n- Blog \n Thanks for building with Mem0. - Mem0 Team",
+  "attachments": []
+}

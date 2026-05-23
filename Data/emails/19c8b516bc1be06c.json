@@ -1,0 +1,15 @@
+{
+  "id": "19c8b516bc1be06c",
+  "threadId": "19c8b516bc1be06c",
+  "snippet": "i Confirmation of your move Hello Denys, You are moving soon! Please find attached a detailed summary of your request. Kind regards, The Scarlet team All rights reserved. © 2026 Scarlet is a trademark",
+  "subject": "Confirmation of your move",
+  "from": "Scarlet <services@scarlet.be>",
+  "date": "23 Feb 2026 17:24:53 +0100",
+  "body": "",
+  "attachments": [
+    {
+      "filename": "Details_of_your_request.pdf",
+      "path": "/data/data/com.termux/files/home/Sync/Data/email_attachments/19c8b516bc1be06c_Details_of_your_request.pdf"
+    }
+  ]
+}

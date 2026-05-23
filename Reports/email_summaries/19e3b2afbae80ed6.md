@@ -1,0 +1,19 @@
+# Email Summary: 🦸‍♂️ Нагадування про ваше замовлення
+
+**From:** "Liki24.com" <info@liki24.com>
+**Date:** Mon, 18 May 2026 12:58:30 +0000 (UTC)
+
+## Content
+Щоб ви завжди мали під рукою все, що потрібно 👉  ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ 
+ [ https://liki24.com/uk/ ]
+Повторити ваше замовлення?
+Добре мати під рукою все, що потрібно, саме тоді, коли це потрібно. Ми аналізуємо частоту покупок товарів на Liki24 та нагадуємо про важливе, щоб бути для вас максимально корисними ❤️
+   true  true  true        [ https://liki24.com/uk/p/flukonazol-darnica-kaps-100-mg-10-darnica-chao/?sc_content=25908_1 ]
+Флуконазол-Дарниця капс. 100 мг №10 [ https://liki24.com/uk/p/flukonazol-darnica-kaps-100-mg-10-darnica-chao/?sc_content=25908_1 ]175 грн
+Купити [ https://liki24.com/uk/p/flukonazol-darnica-kaps-100-mg-10-darnica-chao/?sc_content=25908_1 ]<![endif]
+ [ https://liki24.com/uk/p/nistatinovaya-maz-maz-100000-edg-tuba-15-g-lubnyfarm-pao/?sc_content=25908_1 ]
+Ністатинова мазь 100000 ОД/г туба 15 г [ https://liki24.com/uk/p/nistatinovaya-maz-maz-100000-edg-tuba-15-g-lubnyfarm-pao/?sc_content=25908_1 ]158 грн
+Купити [ https://liki24.com/uk/p/nistatinovaya-maz-maz-100000-edg-tuba-15-g-lubnyfarm-pao/?sc_content=25908_1 ]<![endif]
+ [ https://liki24.com/uk/p/cinkovaya-maz-maz-10-kontejner-25-g-viola-ff-zao/?sc_content=25908_1 ]
+Цинкова мазь 10% 25 г [ https://liki24.com/uk/p/cinkovaya-maz-maz-10-kontejner-25-g-viola-ff-zao/?sc_content=25908_1 ]41 грн
+Купити [ https://liki24.com/uk/p/cinkovaya-maz-maz-10-kontejner-25-g-viola-ff-zao/?sc_content=25908_1 ]<![endif]    true  true  true  true  true  true  true  true  true  Вас також може зацікавити  true  true  true  true  true  true  true  true  true        [ https://liki24.com/uk/p/darsil-tabl-po-225-mg-30-darnica-chao/?sc_content=26624_rela...

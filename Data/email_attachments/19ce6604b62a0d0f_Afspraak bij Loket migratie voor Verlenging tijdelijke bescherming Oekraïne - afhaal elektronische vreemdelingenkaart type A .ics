@@ -1,0 +1,212 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+METHOD:PUBLISH
+PRODID:-//Limilabs//Mail.dll//EN
+BEGIN:VTIMEZONE
+TZID:WEuSt
+BEGIN:STANDARD
+DTSTART:16010101T030000
+TZOFFSETFROM:+0200
+TZOFFSETTO:+0100
+RRULE:FREQ=YEARLY;INTERVAL=1;BYMONTH=10;BYDAY=-1SU
+TZNAME:WEST
+END:STANDARD
+BEGIN:DAYLIGHT
+DTSTART:16010101T020000
+TZOFFSETFROM:+0100
+TZOFFSETTO:+0200
+RRULE:FREQ=YEARLY;INTERVAL=1;BYMONTH=3;BYDAY=-1SU
+TZNAME:WEDT
+END:DAYLIGHT
+END:VTIMEZONE
+BEGIN:VEVENT
+UID:863d8b5c-95c7-46cc-bb79-2e02ddf74300
+CLASS:PUBLIC
+STATUS:CONFIRMED
+DTSTAMP:20260313T084635Z
+DTSTART;TZID=WEuSt:20260403T135000
+DTEND;TZID=WEuSt:20260403T140000
+ORGANIZER;CN=Stad Antwerpen:MAILTO:Noreply-Antwerpen@mijngemeentebezoek.be
+SEQUENCE:0
+SUMMARY:Afspraak bij Loket migratie voor Verlenging tijdelijke bescherming 
+ Oekraïne - afhaal elektronische vreemdelingenkaart type A 
+DESCRIPTION:Beste  \n\n- Denys Maiorov  \n\n  \n\nU heeft een afspraak bij 
+ Loket migratie om u in te schrijven op 3/04/2026  \n\nMeld u aan bij de ti
+ cketzuil met uw geboortedatum of de QR-code in deze mail.  \n\nAfspraakgeg
+ evens:  \n- Product: Verlenging tijdelijke bescherming Oekraïne - afhaal e
+ lektronische vreemdelingenkaart type A  \n- Locatie: Loket migratie  \n- D
+ atum: 3/04/2026  \n- Om: 13:50  \n\nWaar? \n\nTijdelijk loket Oekraïne Uno
+ laan  \n\nUnolaan   \n\n2100 Deurne  \n\n\nWat brengt u mee?   \n- Deze ui
+ tnodgingsmail met QR-code. \n- Nationaal paspoort en/of verblijfstitel. \n
+ - Attest van tijdelijke bescherming. \n- Attest van voorlopig verblijf (bi
+ jlage 15) voor personen ouder dan 12 jaar. U vindt het attest bij deze mai
+ l. \n- 1 recente pasfoto per persoon. \n- Betaalkaart of - app om de nieuw
+ e elektronische vreemdelingenkaart type A te betalen. Bekijk de prijzen en
+  hoe je kan betalen.  \n\nKomt u uw elektronische vreemdelingenkaart afhal
+ en? Neem dan het volgende mee:  \n- Deze uitnodigingsmail met QR-code. \n-
+  Je persoonlijke pin- en pukcode \n- Je huidige elektronische vreemdelinge
+ nkaart of het vervangdocument dat je kreeg bij de aanvraag \n- Is deze ver
+ loren of gestolen\, doe dan voor de afspraak aangifte bij de politie \n\nC
+ ontrole adres door de wijkagent \n\nDe wijkagent komt voor of na uw afspra
+ ak langs op uw adres\, om te controleren dat u er effectief woont.   \n- Z
+ org ervoor dat uw naam duidelijk op de bel en de brievenbus staat.  \n- Ve
+ rblijft u in een collectieve opvangplaats? Dan doet uw begeleider deze con
+ trole.  \n\nHeeft u nog vragen of wil u de afspraak wijzigen?  \n\nGa naar
+  www.antwerpen.be/migratie \n\nLet op!  \n\nDeze afspraak geldt uitsluiten
+ d voor de hierboven vermelde personen. \n\nKinderen moeten aanwezig zijn b
+ ij hun aanvraag\, samen met hun ouder of voogd.  \n\nLoket migratie inform
+ eert u over de verdere procedure op dit emailadres. Contacteer Loket migra
+ tie als uw emailadres verandert.  \n\nDe standaardtaal aan het loket en in
+  de documenten is Nederlands. Je probeert de loketmedewerker te begrijpen.
+  Lukt dat niet? Dan breng je een familielid of vriend mee die genoeg Neder
+ lands spreekt. Lees het volledige huisreglement voor een fijn loketbezoek.
+  \n\nMet vriendelijke groeten  \n\nLoket migratie \n\n\nDear  Denys Maioro
+ v  \n\n  \n\nYou have an appointment at the Migration Desk on 3/04/2026.  
+ \n\nSign in at the ticket kiosk with your date of birth or the QR code in 
+ this email.  \n\nAppointment details   \n- Product: Verlenging tijdelijke 
+ bescherming Oekraïne - afhaal elektronische vreemdelingenkaart type A  \n-
+  Location: Migration desk \n- Date: 3/04/2026  \n- At: 13:50  \n\nWhere? \
+ n\nTijdelijk loket Oekraïne Unolaan  \n\n Unolaan  \n\n2100 Deurne \n\nWha
+ t to bring with you:   \n- This invitation email with QR code.  \n- Nation
+ al passport and/or residence permit.  \n- Certificate of temporary protect
+ ion.  \n- Certificate of provisional residence (Annex 15) for persons over
+  12 years of age. You will find the certificate attached to this email.  \
+ n- 1 recent passport photo per person.  \n- Payment card or app to pay for
+  the new electronic type A foreign nationals card. See prices and how you 
+ can pay (in Dutch).  \n\nIf you come to collect your new electronic type A
+  foreign nationals card?  Bring the following with you:   \n- This invitat
+ ion email with QR code. \n- Your personal PIN and PUK code. \n- Your curre
+ nt card or the replacement document you receiverd with your application.  
+ \n- If it is lost or stolen\, report it to the police before the appointme
+ nt.  \n\n\nVerification of address by neighbourhood police officer:  \n\nT
+ he neighbourhood police officer will visit your address before or after yo
+ ur appointment to verify that you actually live there.   \n- Make sure you
+ r name is clearly written on the door bell and postbox. 　 \n- If you are s
+ taying in a communal shelter\, then your support worker will perform this 
+ verification.  \n\n\nStill have questions or want to change the appointmen
+ t?   \n\nGo to www.antwerpen.be/migratie.  \n\nChildren must be present at
+  their appointment along with their parent or guardian.  \n\nThe Migration
+  desk will inform you of the onward procedure at this email address.  \n\n
+ Please contact the Migration desk if your email address changes.  \n\nThe 
+ standard language at the counter and in documents is Dutch. You try to und
+ erstand the employee.  \n\nIf that doesn't work? Then you bring a family m
+ ember or friend who speaks enough Dutch. \n\nRead the complete house rules
+  for a pleasant visit to the counter.  \n\n\nKind regards\,  \n\nMigration
+  desk\n
+X-ALT-DESC;FMTTYPE=text/html:<P>Beste </P>\n<P><ul><li>Denys Maiorov</ul> <
+ /P>\n<P><img src="cid:Aanmeldcode" alt="barcode" /> </P>\n<P>U heeft een a
+ fspraak bij Loket migratie om u in te schrijven op 3/04/2026 </P>\n<P>Meld
+  u aan bij de ticketzuil met uw geboortedatum of de QR-code in deze mail. 
+ </P>\n<P><FONT size=3><STRONG>Afspraakgegevens</STRONG>:</FONT></P>\n<UL>\
+ n<LI>Product: Verlenging tijdelijke bescherming Oekraïne - afhaal elektron
+ ische vreemdelingenkaart type A </LI>\n<LI>Locatie:&nbsp\;Loket migratie&n
+ bsp\;</LI>\n<LI>Datum: 3/04/2026 </LI>\n<LI>Om: 13:50 </LI></UL>\n<P><STRO
+ NG><FONT size=3>Waar?</FONT></STRONG></P>\n<P>Tijdelijk loket Oekraïne Uno
+ laan </P>\n<P>Unolaan  </P>\n<P>2100 Deurne </P>\n<P>&nbsp\;</P>\n<P><STRO
+ NG><FONT size=3>Wat brengt u mee?</FONT></STRONG> </P>\n<UL>\n<LI>Deze uit
+ nodgingsmail met QR-code.</LI>\n<LI>Nationaal paspoort en/of verblijfstite
+ l.</LI>\n<LI>Attest van&nbsp\;tijdelijke bescherming.</LI>\n<LI>Attest van
+  voorlopig verblijf (bijlage 15) voor personen ouder dan 12 jaar. U vindt 
+ het attest bij deze mail.</LI>\n<LI>1 recente pasfoto per persoon.</LI>\n<
+ LI>Betaalkaart of - app om de nieuwe elektronische vreemdelingenkaart type
+  A te betalen. <A href="https://www.antwerpen.be/info/prijzen-attesten-en-
+ documenten" target=_blank>Bekijk de prijzen en hoe je kan betalen</A>. </L
+ I></UL>\n<P class=MsoNormal style="MARGIN: 0cm"><FONT size=3>Komt u uw ele
+ ktronische vreemdelingenkaart afhalen? Neem dan het volgende mee:<?xml:nam
+ espace prefix = "o" ns = "urn:schemas-microsoft-com:office:office" /><o:p>
+ </o:p></FONT></P>\n<UL type=disc>\n<LI class=MsoNormal style="COLOR: black
+ \; MARGIN: 0cm\; mso-margin-top-alt: auto\; mso-margin-bottom-alt: auto\; 
+ mso-list: l0 level1 lfo1"><SPAN style='FONT-SIZE: 10pt\; FONT-FAMILY: "Ari
+ al"\,sans-serif\; mso-fareast-font-family: "Times New Roman"\; mso-fareast
+ -language: NL-BE'><FONT face="Times New Roman">Deze uitnodigingsmail met Q
+ R-code.<o:p></o:p></FONT></SPAN></LI>\n<LI class=MsoNormal style="MARGIN: 
+ 0cm\; mso-list: l0 level1 lfo1"><SPAN style='mso-fareast-font-family: "Tim
+ es New Roman"'>Je persoonlijke pin- en pukcode<o:p></o:p></SPAN></LI>\n<LI
+  class=MsoNormal style="MARGIN: 0cm\; mso-list: l0 level1 lfo1"><SPAN styl
+ e='mso-fareast-font-family: "Times New Roman"'>Je huidige elektronische vr
+ eemdelingenkaart of het vervangdocument dat je kreeg bij de aanvraag<o:p><
+ /o:p></SPAN></LI>\n<LI class=MsoNormal style="MARGIN: 0cm\; mso-list: l0 l
+ evel1 lfo1"><SPAN style='mso-fareast-font-family: "Times New Roman"'>Is de
+ ze verloren of gestolen\, doe dan voor de afspraak aangifte bij de politie
+ <o:p></o:p></SPAN></LI></UL>\n<P><STRONG><FONT size=3>Controle adres door 
+ de wijkagent</FONT></STRONG></P>\n<P><STRONG></STRONG><STRONG></STRONG>De 
+ wijkagent komt voor of&nbsp\;na uw afspraak langs op uw adres\, om te cont
+ roleren dat u er effectief woont. </P>\n<UL>\n<LI>Zorg ervoor dat uw naam 
+ duidelijk op de bel en de brievenbus staat. </LI>\n<LI>Verblijft u in een 
+ collectieve opvangplaats? Dan doet uw begeleider deze controle. </LI></UL>
+ \n<P><FONT size=3><STRONG>Heeft u nog vragen of wil u de afspraak&nbsp\;wi
+ jzigen?</STRONG>&nbsp\;</FONT></P>\n<P><FONT size=3>Ga naar </FONT><A href
+ ="http://www.antwerpen.be/migratie" target=_blank><FONT size=3>www.antwerp
+ en.be/migratie</FONT></A></P></A>\n<P align=left><STRONG><FONT size=3>Let 
+ op!</FONT></STRONG> </P>\n<P align=left>Deze afspraak geldt uitsluitend vo
+ or de hierboven vermelde personen.</P>\n<P align=left>Kinderen moeten aanw
+ ezig zijn bij hun aanvraag\, samen met hun ouder of voogd. </P>\n<P align=
+ left>Loket migratie&nbsp\;informeert u&nbsp\;over&nbsp\;de verdere&nbsp\;p
+ rocedure op dit emailadres.&nbsp\;Contacteer&nbsp\;Loket migratie&nbsp\;al
+ s&nbsp\;uw emailadres verandert. </P>\n<P align=left>De standaardtaal aan 
+ het loket en in de documenten is Nederlands. Je probeert de loketmedewerke
+ r te begrijpen. Lukt dat niet? Dan breng je een familielid of vriend mee d
+ ie genoeg Nederlands spreekt. <A href="https://www.antwerpen.be/info/607e7
+ bfb5a99c2118f78e741/huisreglement-voor-een-fijn-loketbezoek" target=_blank
+ >Lees het volledige huisreglement voor een fijn loketbezoek</A>.</P>\n<P a
+ lign=left>Met vriendelijke groeten </P>\n<P align=left>Loket migratie</P>\
+ n<P align=left>&nbsp\;</P>\n<P align=left>Dear&nbsp\;&nbsp\;Denys Maiorov 
+ </P>\n<P align=left><img src="cid:Aanmeldcode" alt="barcode" /> </P><SPAN 
+ lang="">\n<P>You have an appointment at the Migration Desk on 3/04/2026. <
+ /P><SPAN lang="">\n<P>Sign in at the ticket kiosk with your date of birth 
+ or the QR code in this email. </P></SPAN></SPAN><SPAN lang="">\n<P><STRONG
+ ><FONT size=3>Appointment details</FONT></STRONG> </P>\n<UL>\n<LI>Product:
+  Verlenging tijdelijke bescherming Oekraïne - afhaal elektronische vreemde
+ lingenkaart type A </LI>\n<LI>Location: Migration desk</LI>\n<LI>Date: 3/0
+ 4/2026 </LI>\n<LI>At: 13:50 </LI></UL>\n<P><STRONG><FONT size=3>Where?</FO
+ NT></STRONG><SPAN lang=""></P>\n<P>Tijdelijk loket Oekraïne Unolaan </P>\n
+ <P></SPAN></SPAN> Unolaan </P>\n<P>2100 Deurne</P><SPAN lang="">\n<P><STRO
+ NG><FONT size=3>What to bring with you</FONT></STRONG>: </P><SPAN lang="">
+ \n<UL>\n<LI>This invitation email with QR code. </LI>\n<LI>National passpo
+ rt and/or residence permit. </LI>\n<LI>Certificate of temporary protection
+ . </LI>\n<LI>Certificate of provisional residence (Annex 15) for persons o
+ ver 12 years of age. You will find the certificate attached to this email.
+  </LI>\n<LI>1 recent passport photo per person. </LI>\n<LI>Payment card or
+  app to pay for the new electronic type A foreign nationals card. See pric
+ es and how you can pay (in Dutch). </LI></UL>\n<P><FONT size=3>If you come
+  to collect your new electronic type A foreign nationals card?<FONT size=2
+ >&nbsp\;<FONT size=3> Bring the following with you:</FONT> </FONT></FONT><
+ /P>\n<UL>\n<LI>This invitation email with QR code.</LI>\n<LI>Your personal
+  PIN and PUK code.</LI>\n<LI>Your current card or the replacement document
+  you receiverd with your application. </LI>\n<LI>If it is lost or stolen\,
+  report it to the police before the appointment. </LI></UL>\n<P>&nbsp\;</P
+ ></SPAN></SPAN><SPAN lang="">\n<P><STRONG><FONT size=3>Verification of add
+ ress by neighbourhood police officer</FONT></STRONG>: </P><SPAN lang="">\n
+ <P>The neighbourhood police officer will visit your address before or afte
+ r your appointment to verify that you actually live there. </P><SPAN lang=
+ "">\n<UL>\n<LI>Make sure your name is clearly written on the door bell and
+  postbox. 　</LI>\n<LI>If you are staying in a communal shelter\, then your
+  support worker will perform this verification. </LI></UL></SPAN></SPAN></
+ SPAN>\n<P>&nbsp\;<SPAN lang=""></P>\n<P>Still have questions or want to ch
+ ange the appointment?  </P><SPAN lang="">\n<P>Go to </SPAN><A href="about:
+ www.antwerpen.be/migratie"><FONT size=3><SPAN lang="">www.antwerpen.be/mig
+ ratie</FONT></SPAN></A><FONT size=3><SPAN lang="">. </P><SPAN lang="">\n<P
+ ><FONT size=2>Children must be present at their appointment along with the
+ ir parent or guardian. </FONT></P>\n<P><FONT size=2>The Migration desk wil
+ l inform you of the onward procedure at this email address. </FONT></P>\n<
+ P><FONT size=2>Please contact the Migration desk if your email address cha
+ nges.</FONT> </P>\n<P><FONT size=2>The standard language at the counter an
+ d in documents is Dutch. You try to understand the employee. </FONT></P>\n
+ <P><FONT size=2>If that doesn't work? Then you bring a family member or fr
+ iend who speaks enough Dutch.</FONT></P>\n<P><FONT size=2><A href="https:/
+ /www.antwerpen.be/info/607e7bfb5a99c2118f78e741/huisreglement-voor-een-fij
+ n-loketbezoek" target=_blank><FONT size=2>Read the complete house rules fo
+ r a pleasant visit to the counter</FONT></A>. </FONT></P></SPAN>\n<P></FON
+ T></SPAN></SPAN>&nbsp\;</P><SPAN lang="">\n<P>Kind regards\, </P><SPAN lan
+ g="">\n<P>Migration desk </P></SPAN></SPAN>
+LOCATION:Tijdelijk loket Oekraïne Unolaan
+ATTENDEE;CN=Denys Maiorov;ROLE=REQ-PARTICIPANT;PARTSTAT=NEEDS-ACTION;RSVP=F
+ ALSE:MAILTO:denisvalerievichmayorov1@gmail.com
+TRANSP:OPAQUE
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:REMINDER
+TRIGGER;RELATED=START:-PT15M
+END:VALARM
+END:VEVENT
+END:VCALENDAR

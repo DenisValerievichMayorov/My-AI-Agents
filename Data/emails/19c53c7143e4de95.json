@@ -1,0 +1,15 @@
+{
+  "id": "19c53c7143e4de95",
+  "threadId": "19c53c7143e4de95",
+  "snippet": "We&#39;re enabling a new OTLP ingestion API starting Mar 23, 2026. MY CONSOLE Hello Denys, You may have previously received a notification regarding this update. If so, please disregard this message.",
+  "subject": "[Product Update] Automatic enablement of new OpenTelemetry ingestion API",
+  "from": "Google Cloud <CloudPlatform-noreply@google.com>",
+  "date": "Thu, 12 Feb 2026 13:34:41 -0800",
+  "body": "Hello Denys,\r\n\r\nWe’re writing to let you know that Cloud Observability has launched a new  \r\nOpenTelemetry (OTel) ingestion API[1] that supports native OpenTelemetry  \r\nProtocol (OTLP) logs, trace spans, and metrics. Starting March 4, 2026,  \r\nthis API will be added as a dependency for the current Cloud Logging, Cloud  \r\nTrace, and Cloud Monitoring ingestion APIs. This change ensures a seamless  \r\ntransition as collection tools migrate to this new unified endpoint.\r\n\r\nWhat you need to know\r\n\r\nKey changes:\r\n\r\n    - The existing Cloud Observability ingestion APIs  \r\n(logging.googleapis.com, cloudtrace.googleapis.com, and  \r\nmonitoring.googleapis.com) are automatically activated when you create a  \r\nGoogle Cloud project using the Google Cloud console or gcloud CLI. The  \r\nbehavior remains unchanged for projects created via API, which do not have  \r\nthese ingestion APIs enabled by default. Starting March 4, 2026, the new  \r\nOTel ingestion endpoint telemetry.googleapis.com will automatically  \r\nactivate when any of these specified APIs are enabled.\r\n    - In addition, we will automatically enable this new endpoint for all  \r\nexisting projects that already have current ingestion APIs active.\r\n\r\nWhat you need to do\r\n\r\nNo action is required from you for this API enablement change, and there  \r\nwill be no disruption to your existing services. You may disable the API at  \r\nany time by following these instructions[2].\r\n\r\nRefer to the attachment for a list of the projects that will automatically  \r\nenable the new endpoint\r\n\r\nWe’re here to help\r\n\r\nIf you have any questions or require assistance, please contact Google  \r\nCloud Support[3].\r\n\r\nThanks for choosing Google Cloud Observability.\r\n\r\n– The Google Cloud Team\r\n\r\n[1]  \r\nhttps://docs.cloud.google.com/stackdriver/docs/reference/telemetry/overview\r\n[2] https://docs.cloud.google.com/service-usage/docs/enable-disable\r\n[3] https://support.google.com/\r\n\r\n© 2026 Google LLC 1600 Amphitheatre Parkway, Mountain View, CA 94043\r\n\r\nYou’ve received this mandatory service announcement to update you about  \r\nimportant changes to Google Cloud or your account.\r\n",
+  "attachments": [
+    {
+      "filename": "5fd13c41-01b8-11f1-9b84-883d24f59680.csv",
+      "path": "/data/data/com.termux/files/home/Sync/Data/email_attachments/19c53c7143e4de95_5fd13c41-01b8-11f1-9b84-883d24f59680.csv"
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "id": "19e305e6be2b96c6",
+  "threadId": "19e305e6be2b96c6",
+  "snippet": "Hi there, TJ here from Mem0. Memory for LLMs is still a new category, and unlike traditional databases, there&#39;s no one-size-fits-all approach. When you&#39;re building a memory layer, you&#39;ll",
+  "subject": "Confused about memory design? Start here",
+  "from": "Mem0 <taranjeet@mem0.io>",
+  "date": "Sat, 16 May 2026 10:39:13 +0000",
+  "body": "Hi there, \r\n TJ here from Mem0. \r\n Memory for LLMs is still a new category, and unlike traditional databases, there's no one-size-fits-all approach. \r\n When you're building a memory layer, you'll need to make a few decisions: \r\n - Should you use User memory or Agent memory? \r\n- Vector search or Graph memory for relationships? \r\n- How long should memories persist? \r\n- What metadata structure makes sense for your use case? \r\n We've built the primitives so you can design the right solution for your needs, but that also means there are real choices to be made. \r\n That's where our Cookbooks come in. Think of them as guiding principles while you navigate these decisions. Each one walks through the trade-offs for different use cases with real implementation examples. \r\n Browse the cookbooks: https://docs.mem0.ai/cookbooks/overview \r\n Building memory is as much about design as it is about code. These guides help you think through both. \r\n Questions on which approach fits your app? Just reply. \r\n Best, \r\n Taranjeet",
+  "attachments": []
+}

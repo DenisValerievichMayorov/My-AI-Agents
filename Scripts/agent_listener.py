@@ -303,7 +303,26 @@ def handle_control_command(raw_command):
         save_agent_control(control)
         return "Пользовательская инструкция очищена."
 
-    return "Команды: /status, /mode local|hybrid|heavy, /model auto|имя, /system текст, /clear-system."
+    if lower.startswith("/fetch_emails"):
+        parts = lower.split()
+        months = parts[1] if len(parts) > 1 and parts[1].isdigit() else "6"
+        log_file = os.path.join(BASE_DIR, "..", "Logs", "email_fetch.log")
+        cmd = f"python {os.path.join(BASE_DIR, 'fetch_emails_full.py')} --months {months}"
+        try:
+            subprocess.Popen(cmd, shell=True, start_new_session=True)
+            return f"Запущена загрузка писем за {months} мес. Лог: Logs/email_fetch.log"
+        except Exception as e:
+            return f"Ошибка запуска fetch_emails: {e}"
+
+    if lower == "/sync_memory":
+        cmd = f"python {os.path.join(BASE_DIR, 'parse_emails_to_memory.py')}"
+        try:
+            subprocess.Popen(cmd, shell=True, start_new_session=True)
+            return "Запущен процесс синхронизации почты с памятью. Лог: Logs/email_parsing.log"
+        except Exception as e:
+            return f"Ошибка запуска sync_memory: {e}"
+
+    return "Команды: /status, /mode local|hybrid|heavy, /model auto|имя, /system текст, /clear-system, /fetch_emails [мес], /sync_memory."
 
 DEVICE_NAME = socket.gethostname()
 if 'motorola' in DEVICE_NAME.lower() or 'localhost' in DEVICE_NAME.lower():
@@ -823,6 +842,10 @@ DASHBOARD_HTML = """<!DOCTYPE html>
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
                     Чат GMC (live + syncthing)
                 </span>
+                <div style="display: flex; gap: 8px;">
+                    <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 14px; border-radius: 6px; width: auto; height: auto;" onclick="changeFontSize(-1)">A-</button>
+                    <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 14px; border-radius: 6px; width: auto; height: auto;" onclick="changeFontSize(1)">A+</button>
+                </div>
             </div>
             <div class="chat-room-screen" id="chat-screen">Загрузка...</div>
             
@@ -846,6 +869,25 @@ DASHBOARD_HTML = """<!DOCTYPE html>
     </div>
 
     <script>
+        function changeFontSize(step) {
+            let currentSize = parseFloat(localStorage.getItem('chatFontSize')) || 16.5;
+            currentSize += step;
+            if (currentSize < 10) currentSize = 10;
+            if (currentSize > 30) currentSize = 30;
+            localStorage.setItem('chatFontSize', currentSize);
+            applyFontSize(currentSize);
+        }
+        function applyFontSize(size) {
+            const chatScreen = document.getElementById('chat-screen');
+            const cmdInput = document.getElementById('cmd-input');
+            if (chatScreen) chatScreen.style.fontSize = size + 'px';
+            if (cmdInput) cmdInput.style.fontSize = size + 'px';
+        }
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedSize = localStorage.getItem('chatFontSize');
+            if (savedSize) applyFontSize(parseFloat(savedSize));
+        });
+
         function updateTime() {
             const now = new Date();
             document.getElementById('local-time').innerText = now.toLocaleTimeString('ru-RU');
@@ -1123,6 +1165,8 @@ COMBINED_HTML = """<!DOCTYPE html>
         <div class="tab-content active" id="tab-agent">
             <div style="display:flex;flex-direction:column;gap:16px;flex:1;">
                 <div style="display:flex;gap:12px;">
+                    <button onclick="changeFontSize(-1)" style="padding:12px;border-radius:8px;border:1px solid var(--border-color);background:rgba(156,163,175,0.08);color:#d1d5db;cursor:pointer;font-weight:bold;">A-</button>
+                    <button onclick="changeFontSize(1)" style="padding:12px;border-radius:8px;border:1px solid var(--border-color);background:rgba(156,163,175,0.08);color:#d1d5db;cursor:pointer;font-weight:bold;">A+</button>
                     <input type="text" id="cmd-input" placeholder="Введите команду агенту..." style="flex:1;padding:12px;border-radius:8px;border:1px solid var(--border-color);background:rgba(17,24,39,0.8);color:var(--text-main);font-size:15px;" onkeydown="if(event.key==='Enter') sendCommand()">
                     <input type="file" id="file-input" style="display:none" onchange="uploadFile()">
                     <button onclick="document.getElementById('file-input').click()" style="padding:12px;border-radius:8px;border:1px solid var(--border-color);background:rgba(156,163,175,0.08);color:#d1d5db;cursor:pointer;">📎</button>
@@ -1147,6 +1191,25 @@ COMBINED_HTML = """<!DOCTYPE html>
         </div>
     </div>
     <script>
+        function changeFontSize(step) {
+            let currentSize = parseFloat(localStorage.getItem('chatFontSize')) || 15;
+            currentSize += step;
+            if (currentSize < 10) currentSize = 10;
+            if (currentSize > 30) currentSize = 30;
+            localStorage.setItem('chatFontSize', currentSize);
+            applyFontSize(currentSize);
+        }
+        function applyFontSize(size) {
+            const chatScreen = document.getElementById('chat-screen');
+            const cmdInput = document.getElementById('cmd-input');
+            if (chatScreen) chatScreen.style.fontSize = size + 'px';
+            if (cmdInput) cmdInput.style.fontSize = size + 'px';
+        }
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedSize = localStorage.getItem('chatFontSize');
+            if (savedSize) applyFontSize(parseFloat(savedSize));
+        });
+
         let showDone = false;
 
         function switchTab(tab) {

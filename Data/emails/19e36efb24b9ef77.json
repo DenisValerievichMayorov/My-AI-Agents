@@ -1,0 +1,10 @@
+{
+  "id": "19e36efb24b9ef77",
+  "threadId": "19e36efb24b9ef77",
+  "snippet": "Hello! Thanks for joining Ollama. If you haven&#39;t yet, make sure to download the app: Download Ollama Here are some examples of what you can build with Ollama: Set up a personal assistant with",
+  "subject": "Thank you for joining Ollama",
+  "from": "Ollama <hello@ollama.com>",
+  "date": "Sun, 17 May 2026 17:15:38 +0000",
+  "body": "\r\nHello!\r\n \r\nThanks for joining Ollama. If you haven't yet, make sure to download the app:\r\n \r\n\r\nDownload Ollama [https://ollama.com/download]\r\n\r\n \r\nHere are some examples of what you can build with Ollama:\r\n * Set up a personal assistant with OpenClaw [https://docs.ollama.com/integrations/openclaw]\r\n\r\n * Automate coding in your terminal with Claude Code [https://docs.ollama.com/integrations/claude-code] or Pi\r\n   [https://docs.ollama.com/integrations/pi]\r\n\r\n * Build your own custom apps with Ollama's API [https://docs.ollama.com/api/introduction]\r\n\r\n \r\nFor models too big to fit on your computer, your account includes free cloud model usage. For additional usage, Ollama's Pro and\r\nMax plans [https://ollama.com/pricing] are available.\r\n \r\n❤️ Ollama\r\n \r\nYou are receiving this email because you opted in to receive updates from Ollama\r\nOllama, 744 High Street, Palo Alto, CA 94301\r\nUnsubscribe [https://app.loops.so/unsubscribe/cmpa1dh6oi4zt0j1vc7tt6ln8/1a847f1dd64078c7f7d99cda55ee47a81368f55d78b1b35aded53832391c48433dea4dbaeba7149b33c54dcaf96289324dc43d6d0812d369c3343664]\r\n",
+  "attachments": []
+}

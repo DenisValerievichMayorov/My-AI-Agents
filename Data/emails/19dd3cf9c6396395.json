@@ -1,0 +1,23 @@
+{
+  "id": "19dd3cf9c6396395",
+  "threadId": "19dd3cf9c6396395",
+  "snippet": "Welkom bij Eneco! Beste Denys, Geweldig dat je voor Eneco kiest! Zo stap je mee in ons plan om iedereen van duurzame energie te voorzien. Want bij Eneco dragen we bij aan een leefbare wereld voor de",
+  "subject": "Welkom bij Eneco!",
+  "from": "Welcome <Welcome@eneco.be>",
+  "date": "Tue, 28 Apr 2026 11:18:10 +0000 (UTC)",
+  "body": "",
+  "attachments": [
+    {
+      "filename": "AlgemeneVoorwaarden.pdf",
+      "path": "/data/data/com.termux/files/home/Sync/Data/email_attachments/19dd3cf9c6396395_AlgemeneVoorwaarden.pdf"
+    },
+    {
+      "filename": "TariffCardElecNL.pdf",
+      "path": "/data/data/com.termux/files/home/Sync/Data/email_attachments/19dd3cf9c6396395_TariffCardElecNL.pdf"
+    },
+    {
+      "filename": "TariffCardGasNL.pdf",
+      "path": "/data/data/com.termux/files/home/Sync/Data/email_attachments/19dd3cf9c6396395_TariffCardGasNL.pdf"
+    }
+  ]
+}

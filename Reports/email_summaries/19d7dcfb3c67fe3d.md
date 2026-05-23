@@ -1,0 +1,43 @@
+# Email Summary: Код подтверждения адреса электронной почты учетной записи Brother at your side
+
+**From:** "Майкрософт от имени Brother at your side" <msonlineservicesteam@microsoftonline.com>
+**Date:** Sat, 11 Apr 2026 18:30:55 +0000
+
+## Content
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- This is the new email template for SSPR which aligns well with the email that are sent out from IW portal -->
+
+<!-- To make use this template, you will need to add a new page to the EmailTemplates directory that has this page as the master page. 
+     
+     The new page must specify the following placeholders:
+
+        - SubjectPlaceholder - The email subject
+        - HeaderPlaceholder - The header of the e-mail document
+        - BodyPlaceholder - The body of the e-mail document
+
+-->
+
+<!-- For dir and lang attributes you will need to define them at the individual tables as well. Otherwise some email clients do not render the email properly -->
+<html xmlns="http://www.w3.org/1999/xhtml" dir="ltr" lang="ru">
+<head id="Head1"><title>
+	
+    Код подтверждения адреса электронной почты учетной записи Brother at your side
+
+</title><meta name="ROBOTS" content="NOINDEX, NOFOLLOW" />
+    <!-- Template B O365 -->
+    <style>
+        table td {border-collapse:collapse;margin:0;padding:0;}
+    </style>
+</head>
+<body  dir="ltr" lang="ru">
+    <table width="100%" cellpadding="0" cellspacing="0" border="0" dir="ltr" lang="ru">
+         <tr>
+            <td valign="top" width="50%"></td>
+            <td valign="top">
+               <!-- Email Header --> 
+               <table width="640" cellpadding="0" cellspacing="0" border="0" dir="ltr" lang="ru" style="border-left:1px solid #e3e3e3;border-right: 1px solid #e3e3e3;">
+                <tr style="background-color: #0D2EA0;">
+                    <td width="1" style="background:#0D2EA0; border-top:1px solid #e3e3e3;"></td>
+                    <td width="24" style="border-top:1px solid #e3e3e3;border-bottom:1px solid #e3e3e3;">&#160;</td>
+                    <td width="310" valign="middle" style="border-top:1px solid #e3e3e3; border-bottom:1px solid #e3e3e3;padding:12px 0;"...

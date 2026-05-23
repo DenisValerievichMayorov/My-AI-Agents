@@ -1,0 +1,10 @@
+{
+  "id": "19cd35aed48f92c3",
+  "threadId": "19cd35aed48f92c3",
+  "snippet": "Explain unfamiliar code, refactor codebases, and iterate quickly ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏",
+  "subject": "Using agents in Cursor",
+  "from": "Cursor Team <team@mail.cursor.com>",
+  "date": "Mon, 09 Mar 2026 16:07:56 +0000",
+  "body": "Explain unfamiliar code, refactor codebases, and iterate quickly  \r\n\r\nHi there,\r\n\r\nAgents are more capable than ever. We’re seeing new default patterns emerge among developers using Cursor today.\r\n\r\nUnderstand unfamiliar code\r\n\r\n* “Explain how this feature works”\r\n* “Why is this file structured this way?”\r\n\r\nWhy is this file structured this way?\r\n\r\nTry this sample prompt ( https://cursor.com/link/prompt?text=why%20is%20this%20file%20structured%20this%20way%3F )\r\n\r\nImplement scoped changes\r\n\r\n* “Refactor this file to be simpler”\r\n*\r\n“Add tests for this code”\r\n\r\nAdd tests for this code\r\n\r\nTry this sample prompt ( https://cursor.com/link/prompt?text=add%20tests%20for%20this%20code )\r\n\r\nMake changes across files\r\n\r\n* “Update the frontend to match this backend change”\r\n*\r\n“Add a new API endpoint”\r\n\r\nAdd a new API endpoint\r\n\r\nTry this sample prompt ( https://cursor.com/link/prompt?text=add%20a%20new%20API%20endpoint )\r\n\r\nJoin an upcoming workshop ( https://cursor.com/workshops ) to learn about advanced Cursor workflows.\r\n\r\nBest,\r\nCursor Team\r\n\r\nThe best way to code with AI.\r\n\r\nTo opt out of future emails, click unsubscribe ( https://track.customer.io/unsubscribe/dgT_pwsBANaj7x_Vo-8fAZzTWubSGPXQqgZXbdvl0Q== ).\r\n\r\nDownload Cursor ( https://cursor.com/download )    Use Cursor in browser ( https://cursor.com/agents )    Read the docs ( https://cursor.com/docs )    Join a workshop ( https://cursor.com/workshops )\r\n",
+  "attachments": []
+}

@@ -1,0 +1,19 @@
+{
+  "id": "19e35423881c877f",
+  "threadId": "19e353810c7efe28",
+  "snippet": "Адрес не найден Сообщение не доставлено, так как адрес fiscale.bemiddeling@minfin.fed.be не найден или не принимает входящие письма. ПОДРОБНЕЕ… Эта ссылка ведет на сторонний сайт Ответ удаленного",
+  "subject": "Delivery Status Notification (Failure)",
+  "from": "Mail Delivery Subsystem <mailer-daemon@googlemail.com>",
+  "date": "Sun, 17 May 2026 02:26:32 -0700 (PDT)",
+  "body": "\n** Адрес не найден **\n\nСообщение не доставлено, так как адрес fiscale.bemiddeling@minfin.fed.be не найден или не принимает входящие письма.\n\nПодробнее читайте здесь: https://aka.ms/EXOSmtpErrors\n(внимание: эта ссылка ведет на сторонний сайт)\n\nОтвет удаленного сервера:\n550 5.4.1 Recipient address rejected: Access denied. For more information see https://aka.ms/EXOSmtpErrors [AM3PEPF00009B9F.eurprd04.prod.outlook.com 2026-05-17T09:26:32.815Z 08DEB35878713F9C]\n",
+  "attachments": [
+    {
+      "filename": "icon.png",
+      "path": "/data/data/com.termux/files/home/Sync/Data/email_attachments/19e35423881c877f_icon.png"
+    },
+    {
+      "filename": "warning_triangle.png",
+      "path": "/data/data/com.termux/files/home/Sync/Data/email_attachments/19e35423881c877f_warning_triangle.png"
+    }
+  ]
+}

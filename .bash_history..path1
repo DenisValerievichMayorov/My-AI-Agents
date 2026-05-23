@@ -1,0 +1,56 @@
+pkg update && pkg upgrade
+npm install -g @google/gemini-cli --ignore-scripts
+curl -O https://antigravity.google/download/linux/antigravity.deb
+sudo apt install ./antigravity.deb
+pkg install npm
+npm install -g @google/gemini-cli --ignore-scripts
+curl -O https://antigravity.google/download/linux/antigravity.deb
+sudo apt install ./antigravity.deb
+pkg install sudo
+pkg install tsu
+curl -O https://antigravity.google/download/linux/antigravity.deb
+sudo apt install ./antigravity.deb
+gemini
+запусти
+gemini
+kodex
+codex
+gemeni
+gemeny
+gemeni
+создадим прект по написанию письма в профсоюз
+gemini
+создадим прект по написанию письма в профсоюз
+gemini
+hermes
+hermes
+codex
+установился ли полностью hermes если установился полностью хотел бы его переключить на опенроутер с возможностью переключаться при необходимостина опенюай через кодекс
+codex
+gemini
+hermes
+hermes login
+pkg update
+pkg install syncthing
+syncting
+cyncthing
+synkthing
+syncthing
+cat ~/.hermes/memories/USER.md
+syncthing
+z
+exit
+clear
+syncthing
+gemini
+cat ~/gemini/GEMINI.md
+mkdir -p ~/.gemini
+cat ~/gemini/GEMINI.md
+find ~ -name ".gemini"
+cat data/data/com.termux/files/home/.gemini
+gemini
+hermes
+gemini
+hermes
+demini
+gemini

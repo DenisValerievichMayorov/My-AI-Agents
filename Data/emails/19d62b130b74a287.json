@@ -1,0 +1,15 @@
+{
+  "id": "19d62b130b74a287",
+  "threadId": "19d62b130b74a287",
+  "snippet": "✅ Успішна оплата! № WFP-BTN-9677333-69d39fcc521bf Сума: 6089 UAH Сайт: liki24-delivery.com ЄДРПОУ: 45306034 IBAN: UA6630*05 Опис: Оплата замовлення 3192661 (6089) Дані платежу Номер картки: 45XX-XXXX-",
+  "subject": "Повідомлення про успішну оплату",
+  "from": "WayForPay <notify@wayforpay.com.ua>",
+  "date": "Mon, 6 Apr 2026 12:07:52 +0000",
+  "body": "",
+  "attachments": [
+    {
+      "filename": "receipt.pdf",
+      "path": "/data/data/com.termux/files/home/Sync/Data/email_attachments/19d62b130b74a287_receipt.pdf"
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "id": "19c9bdd6ec61b862",
+  "threadId": "19c9bd6464cce89e",
+  "snippet": "Адрес не найден Сообщению адресату laura.gevaert@politite.belgie не доставлено, так как домен politite.belgie не найден. Удалите пробелы, исправьте опечатки и повторите попытку. ПОДРОБНЕЕ… Полученный",
+  "subject": "Delivery Status Notification (Failure)",
+  "from": "Mail Delivery Subsystem <mailer-daemon@googlemail.com>",
+  "date": "Thu, 26 Feb 2026 13:31:45 -0800 (PST)",
+  "body": "\n** Адрес не найден **\n\nСообщению адресату laura.gevaert@politite.belgie не доставлено, так как домен politite.belgie не найден. Удалите пробелы, исправьте опечатки и повторите попытку.\n\nПодробнее читайте здесь: https://support.google.com/mail/?p=BadRcptDomain\n\nПолученный ответ:\n\nDNS Error: DNS type 'mx' lookup of politite.belgie responded with code NXDOMAIN\r\nDomain name not found: politite.belgie For more information, go to https://support.google.com/mail/?p=BadRcptDomain\n",
+  "attachments": [
+    {
+      "filename": "icon.png",
+      "path": "/data/data/com.termux/files/home/Sync/Data/email_attachments/19c9bdd6ec61b862_icon.png"
+    }
+  ]
+}

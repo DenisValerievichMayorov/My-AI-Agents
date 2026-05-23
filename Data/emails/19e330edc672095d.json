@@ -1,0 +1,10 @@
+{
+  "id": "19e330edc672095d",
+  "threadId": "19e330edc672095d",
+  "snippet": "Action needed: Secrets detected in DenisValerievichMayorov/My-AI-Agents Please resolve these alerts Anyone with read access can view exposed secrets. Consider rotating and revoking each valid secret to",
+  "subject": "[DenisValerievichMayorov/My-AI-Agents] Possible valid secrets detected",
+  "from": "GitHub <support@github.com>",
+  "date": "Sat, 16 May 2026 16:11:12 -0700",
+  "body": "Action needed: Secrets detected in DenisValerievichMayorov/My-AI-Agents:\r\n\r\nPlease resolve these alerts\r\nAnyone with read access can view exposed secrets. Consider rotating and revoking each valid secret to avoid any irreversible damage.\r\n\r\n  Google API Key\r\n  Secret detected in agent_listener.py#L114 • commit 8fc84e1d\r\n  Review at https://github.com/DenisValerievichMayorov/My-AI-Agents/security/secret-scanning/1\r\n\r\n\r\n\r\nYou are receiving this email because GitHub scanned for exposed tokens or private key credentials in your repository.\r\n\r\nThanks,\r\nGitHub.com\r\n",
+  "attachments": []
+}

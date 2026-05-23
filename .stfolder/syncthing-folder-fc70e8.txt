@@ -1,0 +1,5 @@
+# This directory is a Syncthing folder marker.
+# Do not delete.
+
+folderID: twwct-lkqgn
+created: 2026-05-18T23:33:38+02:00
