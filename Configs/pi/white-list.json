@@ -1,7 +1,17 @@
 {
-    "version": "2026-08-02",
+    "version": "2026-08-02-live",
     "description": "White list of cloud pi agents (local Ollama/LM Studio removed 2026-08-02).",
-    "selection_strategy": "fast tools -> ling-flash; long-ctx free -> nemotron free; cloud -> minimax-m3; NIM -> gpt-oss-20b. No cerebras/mistral/groq.",
+    "default_mode": "full-4",
+    "default_mode_note": "User standing order C 2026-08-02: always use all 4 slots until «только free». Model IDs are LIVE-ranked, not frozen.",
+    "selection_strategy": "LIVE roster: slots from this file (provider+lane). Field `model` is SEED prior only (+small bonus), NOT sticky freeze. Active model = best health score among models.json candidates minus black-list. Anti-collapse when slots share provider. Background: `python ik_model_roster.py watch start --bg` probes ALL candidates (API ping, round-robin). Live: active-roster.json + Sync/Data/ik_model_health.json. Env: IK_ROSTER_LIVE=1 (default), IK_SWITCH_MARGIN=0, IK_PREFERRED_BONUS=3, IK_PROBE_STALE_HOURS=6. No cerebras/mistral/groq.",
+    "roster_engine": "C:/Users/anton/agent_tools/ik_model_roster.py",
+    "active_roster": "C:/Users/anton/Sync/Configs/pi/active-roster.json",
+    "health_store": "C:/Users/anton/Sync/Data/ik_model_health.json",
+    "health_worker": {
+        "cmd": "python C:/Users/anton/agent_tools/ik_model_roster.py watch start --bg --interval 300 --batch 6 --method auto",
+        "pid": "C:/Users/anton/Sync/Data/ik_model_health_worker.pid",
+        "log": "C:/Users/anton/Sync/Data/ik_model_health_worker.log"
+    },
     "agents": [
         {
             "name": "pi-ling",

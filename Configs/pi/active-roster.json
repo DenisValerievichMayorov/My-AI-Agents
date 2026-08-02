@@ -1,0 +1,425 @@
+{
+  "version": 2,
+  "updated_at": "2026-08-02T11:24:25Z",
+  "source": "ik_model_roster.live_health_rank",
+  "policy": {
+    "live": true,
+    "switch_margin": 0.0,
+    "preferred_bonus": 3.0,
+    "stale_hours": 6.0
+  },
+  "default_mode": "full-4",
+  "workers": {
+    "nvidia": {
+      "name": "pi-nvidia",
+      "provider": "nvidia",
+      "model": "mistralai/mistral-nemotron",
+      "lane": "nim",
+      "notes": "live-rank score=94.83 seed=openai/gpt-oss-20b; NVIDIA NIM",
+      "score": 94.83,
+      "status": "active",
+      "health_id": "nvidia::mistralai/mistral-nemotron",
+      "seed_model": "openai/gpt-oss-20b",
+      "live": true
+    },
+    "ling": {
+      "name": "pi-ling",
+      "provider": "or-free",
+      "model": "nvidia/nemotron-3-super-120b-a12b:free",
+      "lane": "fast",
+      "notes": "live-rank score=75.18 seed=inclusionai/ling-3.0-flash:free; Fastest free tools",
+      "score": 75.18,
+      "status": "active",
+      "health_id": "or-free::nvidia/nemotron-3-super-120b-a12b:free",
+      "seed_model": "inclusionai/ling-3.0-flash:free",
+      "live": true
+    },
+    "ollama-cloud": {
+      "name": "pi-ollama-cloud",
+      "provider": "ollama-cloud",
+      "model": "minimax-m3",
+      "lane": "cloud",
+      "notes": "live-rank score=65.54 seed=active; Ollama cloud",
+      "score": 65.54,
+      "status": "active",
+      "health_id": "ollama-cloud::minimax-m3",
+      "seed_model": "minimax-m3",
+      "live": true
+    },
+    "nemotron": {
+      "name": "pi-nemotron",
+      "provider": "or-free",
+      "model": "openrouter/free",
+      "lane": "long",
+      "notes": "live-rank score=35.0 seed=nvidia/nemotron-3-super-120b-a12b:free; Primary free long context",
+      "score": 35.0,
+      "status": "untested",
+      "health_id": "or-free::openrouter/free",
+      "seed_model": "nvidia/nemotron-3-super-120b-a12b:free",
+      "live": true
+    }
+  },
+  "mesh_keys": [
+    "nvidia",
+    "ling",
+    "ollama-cloud",
+    "nemotron"
+  ],
+  "failover_order": [
+    "nvidia",
+    "ling",
+    "ollama-cloud",
+    "nemotron"
+  ],
+  "candidate_pools": {
+    "ollama-cloud": [
+      {
+        "model": "minimax-m3",
+        "score": 65.54,
+        "status": "active",
+        "last_probe": null,
+        "last_ok": "2026-08-02T11:12:56Z",
+        "success": 7,
+        "fail": 1
+      },
+      {
+        "model": "gemma4:31b",
+        "score": 35.0,
+        "status": "untested",
+        "last_probe": null,
+        "last_ok": null,
+        "success": 0,
+        "fail": 0
+      },
+      {
+        "model": "gpt-oss:120b",
+        "score": 35.0,
+        "status": "untested",
+        "last_probe": null,
+        "last_ok": null,
+        "success": 0,
+        "fail": 0
+      },
+      {
+        "model": "gpt-oss:20b",
+        "score": 35.0,
+        "status": "untested",
+        "last_probe": null,
+        "last_ok": null,
+        "success": 0,
+        "fail": 0
+      },
+      {
+        "model": "nemotron-3-nano:30b",
+        "score": 35.0,
+        "status": "untested",
+        "last_probe": null,
+        "last_ok": null,
+        "success": 0,
+        "fail": 0
+      },
+      {
+        "model": "nemotron-3-super",
+        "score": 35.0,
+        "status": "untested",
+        "last_probe": null,
+        "last_ok": null,
+        "success": 0,
+        "fail": 0
+      },
+      {
+        "model": "nemotron-3-ultra",
+        "score": 35.0,
+        "status": "untested",
+        "last_probe": null,
+        "last_ok": null,
+        "success": 0,
+        "fail": 0
+      }
+    ],
+    "nvidia": [
+      {
+        "model": "mistralai/mistral-nemotron",
+        "score": 94.83,
+        "status": "active",
+        "last_probe": "2026-08-02T11:22:25Z",
+        "last_ok": "2026-08-02T11:22:25Z",
+        "success": 1,
+        "fail": 0
+      },
+      {
+        "model": "meta/llama-3.3-70b-instruct",
+        "score": 83.64,
+        "status": "active",
+        "last_probe": "2026-08-02T11:21:51Z",
+        "last_ok": "2026-08-02T11:21:51Z",
+        "success": 1,
+        "fail": 0
+      },
+      {
+        "model": "meta/llama-3.1-70b-instruct",
+        "score": 80.47,
+        "status": "active",
+        "last_probe": "2026-08-02T11:21:43Z",
+        "last_ok": "2026-08-02T11:21:43Z",
+        "success": 1,
+        "fail": 0
+      },
+      {
+        "model": "openai/gpt-oss-20b",
+        "score": 67.77,
+        "status": "active",
+        "last_probe": null,
+        "last_ok": "2026-08-02T11:12:06Z",
+        "success": 5,
+        "fail": 1
+      },
+      {
+        "model": "nvidia/nemotron-3-super-120b-a12b",
+        "score": 35.0,
+        "status": "untested",
+        "last_probe": null,
+        "last_ok": null,
+        "success": 0,
+        "fail": 0
+      },
+      {
+        "model": "nvidia/nemotron-3-ultra-550b-a55b",
+        "score": 35.0,
+        "status": "untested",
+        "last_probe": null,
+        "last_ok": null,
+        "success": 0,
+        "fail": 0
+      },
+      {
+        "model": "nvidia/nemotron-3-nano-30b-a3b",
+        "score": 35.0,
+        "status": "untested",
+        "last_probe": null,
+        "last_ok": null,
+        "success": 0,
+        "fail": 0
+      },
+      {
+        "model": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning",
+        "score": 35.0,
+        "status": "untested",
+        "last_probe": null,
+        "last_ok": null,
+        "success": 0,
+        "fail": 0
+      },
+      {
+        "model": "nvidia/nvidia-nemotron-nano-9b-v2",
+        "score": 35.0,
+        "status": "untested",
+        "last_probe": null,
+        "last_ok": null,
+        "success": 0,
+        "fail": 0
+      },
+      {
+        "model": "nvidia/nemotron-nano-12b-v2-vl",
+        "score": 35.0,
+        "status": "untested",
+        "last_probe": null,
+        "last_ok": null,
+        "success": 0,
+        "fail": 0
+      },
+      {
+        "model": "nvidia/llama-3.3-nemotron-super-49b-v1.5",
+        "score": 35.0,
+        "status": "untested",
+        "last_probe": null,
+        "last_ok": null,
+        "success": 0,
+        "fail": 0
+      },
+      {
+        "model": "z-ai/glm-5.2",
+        "score": 35.0,
+        "status": "untested",
+        "last_probe": null,
+        "last_ok": null,
+        "success": 0,
+        "fail": 0
+      },
+      {
+        "model": "stepfun-ai/step-3.7-flash",
+        "score": 35.0,
+        "status": "untested",
+        "last_probe": null,
+        "last_ok": null,
+        "success": 0,
+        "fail": 0
+      },
+      {
+        "model": "nvidia/llama-3.3-nemotron-super-49b-v1",
+        "score": 35.0,
+        "status": "untested",
+        "last_probe": null,
+        "last_ok": null,
+        "success": 0,
+        "fail": 0
+      },
+      {
+        "model": "deepseek-ai/deepseek-v4-flash",
+        "score": 32.3,
+        "status": "poor",
+        "last_probe": "2026-08-02T11:21:05Z",
+        "last_ok": null,
+        "success": 0,
+        "fail": 1
+      },
+      {
+        "model": "minimaxai/minimax-m3",
+        "score": 18.0,
+        "status": "poor",
+        "last_probe": "2026-08-02T11:22:17Z",
+        "last_ok": null,
+        "success": 0,
+        "fail": 1
+      },
+      {
+        "model": "deepseek-ai/deepseek-v4-pro",
+        "score": 18.0,
+        "status": "poor",
+        "last_probe": "2026-08-02T11:21:31Z",
+        "last_ok": null,
+        "success": 0,
+        "fail": 1
+      }
+    ],
+    "or-free": [
+      {
+        "model": "inclusionai/ling-3.0-flash:free",
+        "score": 78.58,
+        "status": "cooldown",
+        "last_probe": null,
+        "last_ok": "2026-08-02T11:11:27Z",
+        "success": 5,
+        "fail": 4
+      },
+      {
+        "model": "nvidia/nemotron-3-super-120b-a12b:free",
+        "score": 75.18,
+        "status": "active",
+        "last_probe": null,
+        "last_ok": "2026-08-02T11:11:19Z",
+        "success": 7,
+        "fail": 0
+      },
+      {
+        "model": "openrouter/free",
+        "score": 35.0,
+        "status": "untested",
+        "last_probe": null,
+        "last_ok": null,
+        "success": 0,
+        "fail": 0
+      },
+      {
+        "model": "nvidia/nemotron-3-nano-30b-a3b:free",
+        "score": 35.0,
+        "status": "untested",
+        "last_probe": null,
+        "last_ok": null,
+        "success": 0,
+        "fail": 0
+      },
+      {
+        "model": "nvidia/nemotron-3-ultra-550b-a55b:free",
+        "score": 35.0,
+        "status": "untested",
+        "last_probe": null,
+        "last_ok": null,
+        "success": 0,
+        "fail": 0
+      },
+      {
+        "model": "poolside/laguna-s-2.1:free",
+        "score": 35.0,
+        "status": "untested",
+        "last_probe": null,
+        "last_ok": null,
+        "success": 0,
+        "fail": 0
+      },
+      {
+        "model": "poolside/laguna-xs-2.1:free",
+        "score": 35.0,
+        "status": "untested",
+        "last_probe": null,
+        "last_ok": null,
+        "success": 0,
+        "fail": 0
+      },
+      {
+        "model": "cohere/north-mini-code:free",
+        "score": 35.0,
+        "status": "untested",
+        "last_probe": null,
+        "last_ok": null,
+        "success": 0,
+        "fail": 0
+      },
+      {
+        "model": "google/gemma-4-26b-a4b-it:free",
+        "score": 35.0,
+        "status": "untested",
+        "last_probe": null,
+        "last_ok": null,
+        "success": 0,
+        "fail": 0
+      },
+      {
+        "model": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+        "score": 35.0,
+        "status": "untested",
+        "last_probe": null,
+        "last_ok": null,
+        "success": 0,
+        "fail": 0
+      },
+      {
+        "model": "nvidia/nemotron-nano-12b-v2-vl:free",
+        "score": 35.0,
+        "status": "untested",
+        "last_probe": null,
+        "last_ok": null,
+        "success": 0,
+        "fail": 0
+      },
+      {
+        "model": "nvidia/nemotron-nano-9b-v2:free",
+        "score": 35.0,
+        "status": "untested",
+        "last_probe": null,
+        "last_ok": null,
+        "success": 0,
+        "fail": 0
+      },
+      {
+        "model": "nvidia/nemotron-3.5-content-safety:free",
+        "score": 35.0,
+        "status": "untested",
+        "last_probe": null,
+        "last_ok": null,
+        "success": 0,
+        "fail": 0
+      },
+      {
+        "model": "openai/gpt-oss-20b:free",
+        "score": 18.0,
+        "status": "poor",
+        "last_probe": "2026-08-02T11:24:24Z",
+        "last_ok": null,
+        "success": 0,
+        "fail": 1
+      }
+    ]
+  },
+  "notes": "LIVE roster: models.json is the full candidate pool; white-list model is seed prior only; health-worker probes all candidates in background; black-list always excluded."
+}

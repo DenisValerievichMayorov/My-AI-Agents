@@ -1,0 +1,41 @@
+{
+  "version": "2026-08-02",
+  "description": "Providers and models banned for pi/Hermes agents.",
+  "providers_removed": [
+    {
+      "provider": "groq",
+      "reason": "User policy 2026-08-02: remove from all agents; TPM limits historically."
+    },
+    {
+      "provider": "cerebras",
+      "reason": "User policy 2026-08-02: remove from all agents."
+    },
+    {
+      "provider": "mistral",
+      "reason": "User policy 2026-08-02: remove Mistral AI provider from all agents (NIM model mistralai/mistral-nemotron may remain)."
+    }
+  ],
+  "models": [
+    {
+      "model": "google/gemma-4-31b-it:free",
+      "provider": "or-free",
+      "reason": "HTTP 429 shared pool"
+    },
+    {
+      "model": "openai/gpt-oss-120b",
+      "provider": "nvidia",
+      "reason": "Timeout / ECONNRESET on NIM"
+    },
+    {
+      "model": "moonshotai/kimi-k2.6",
+      "provider": "nvidia",
+      "reason": "404 on NIM"
+    },
+    {
+      "model": "tencent/hy3:free",
+      "provider": "or-free",
+      "reason": "Free tier expired"
+    }
+  ],
+  "notes": "Allowed providers: or-free, nvidia, ollama-cloud only. See MODEL_ROUTING.md."
+}
