@@ -18,11 +18,19 @@ git add Docs/IK_HERD_DESIGN.md Configs/pi/model_pool.json Scripts/ik_model_probe
 git status --short
 git commit -m "step 1: model_pool.json + probe script"
 git log -1 --oneline
+git push origin HEAD   # sync with GitHub after each step
 ```
+
+## GitHub sync (обязательно)
+1. После **каждого** step-коммита: `git push origin HEAD` (или `git push`).
+2. Проверка: `git status -sb` → не должно быть `ahead N` без причины.
+3. Если push отклонён (non-fast-forward): **не** `--force` без confirm пользователя; сначала `git pull --rebase` / разбор.
+4. Force-push / rewrite history — только с явным OK пользователя.
 
 ## Rollback
 ```powershell
 git log --oneline -20
 git revert <hash>   # preferred
 # or: git checkout <hash> -- path/to/file
+git push origin HEAD
 ```
