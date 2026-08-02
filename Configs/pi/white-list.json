@@ -1,0 +1,39 @@
+{
+    "version": "2026-08-02",
+    "description": "White list of cloud pi agents (local Ollama/LM Studio removed 2026-08-02).",
+    "selection_strategy": "fast tools -> ling-flash; long-ctx free -> nemotron free; cloud -> minimax-m3; NIM -> gpt-oss-20b. No cerebras/mistral/groq.",
+    "agents": [
+        {
+            "name": "pi-ling",
+            "provider": "or-free",
+            "type": "fast-free-tools",
+            "model": "inclusionai/ling-3.0-flash:free",
+            "context": 262144,
+            "notes": "Fastest free tools"
+        },
+        {
+            "name": "pi-nemotron",
+            "provider": "or-free",
+            "type": "long-ctx-free",
+            "model": "nvidia/nemotron-3-super-120b-a12b:free",
+            "context": 262144,
+            "notes": "Primary free long context"
+        },
+        {
+            "name": "pi-ollama-cloud",
+            "provider": "ollama-cloud",
+            "type": "cloud",
+            "model": "minimax-m3",
+            "context": 131072,
+            "notes": "Ollama cloud"
+        },
+        {
+            "name": "pi-nvidia",
+            "provider": "nvidia",
+            "type": "nim-20b",
+            "model": "openai/gpt-oss-20b",
+            "context": 131072,
+            "notes": "NVIDIA NIM"
+        }
+    ]
+}

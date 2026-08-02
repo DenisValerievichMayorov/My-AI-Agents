@@ -1,0 +1,1 @@
+require('../../../Scripts/telegram_agent.js');

@@ -9,39 +9,9 @@ import requests
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DEVICE_NAME = socket.gethostname()
 
-def normalize_ollama_host(raw_host):
-    host = (raw_host or "http://localhost:11434").strip().rstrip("/")
-    if host in ("0.0.0.0", "127.0.0.1", "localhost"):
-        return "http://localhost:11434"
-    if host.startswith("0.0.0.0:"):
-        return "http://localhost:" + host.split(":", 1)[1]
-    if not host.startswith(("http://", "https://")):
-        host = "http://" + host
-    return host
+# Local Ollama removed 2026-08-02
+LOCAL_LLM_ENABLED = False
 
-def load_ollama_config():
-    config_path = os.path.abspath(os.path.join(BASE_DIR, "..", "Configs", "ollama_models.json"))
-    try:
-        with open(config_path, "r", encoding="utf-8") as f:
-            return json.load(f)
-    except Exception:
-        return {}
-
-OLLAMA_CONFIG = load_ollama_config()
-OLLAMA_HOST = normalize_ollama_host(os.environ.get("OLLAMA_HOST") or OLLAMA_CONFIG.get("host"))
-OLLAMA_MODEL = os.environ.get("OLLAMA_MODEL") or OLLAMA_CONFIG.get("default_chat_model", "gemma3:latest")
-OLLAMA_ROLE_MODELS = OLLAMA_CONFIG.get("role_models", {})
-OLLAMA_MODEL_PREFERENCES = [
-    OLLAMA_MODEL,
-    *OLLAMA_CONFIG.get("preferred_chat_models", []),
-    "gemma4",
-    "gemma3",
-    "gemma2:2b",
-    "llama3.2",
-    "qwen2.5-coder",
-    "llama3",
-]
-OLLAMA_MODEL_PREFERENCES = list(dict.fromkeys(OLLAMA_MODEL_PREFERENCES))
 OPENROUTER_HEAVY_ENABLED = os.environ.get("GMC_OPENROUTER_HEAVY", "").lower() in ("1", "true", "yes", "on")
 DEFAULT_MODEL = "google/gemma-4-31b-it:free"
 OPENROUTER_TIMEOUT = float(os.environ.get("GMC_OPENROUTER_TIMEOUT", "25"))
@@ -135,100 +105,29 @@ def query_openrouter(prompt, system_prompt="You are a helpful AI assistant.", mo
 
     return None
 
-def select_ollama_model(requested_model=None):
-    """Выбирает установленную локальную модель Ollama по единому приоритету агентов."""
-    try:
-        response = requests.get(f"{OLLAMA_HOST}/api/tags", timeout=3)
-        if response.status_code != 200:
-            return requested_model or OLLAMA_MODEL
-
-        installed = [m.get("name", "") for m in response.json().get("models", []) if m.get("name")]
-        preferences = []
-        if requested_model:
-            preferences.append(requested_model)
-        preferences.extend(OLLAMA_MODEL_PREFERENCES)
-
-        for preferred in preferences:
-            for model_name in installed:
-                if model_name.lower() == preferred.lower() or model_name.lower().startswith(preferred.lower()):
-                    return model_name
-
-        return installed[0] if installed else (requested_model or OLLAMA_MODEL)
-    except Exception:
-        return requested_model or OLLAMA_MODEL
-
-def classify_local_model(prompt, default_role="dispatcher"):
-    text = (prompt or "").lower()
-    code_markers = [
-        "python", "javascript", "node", "powershell", "bash", "script", "скрипт",
-        "код", "ошибка", "traceback", "exception", "function", "class", "git",
-        "api", "json", "html", "css", "react", "sql"
-    ]
-    if any(marker in text for marker in code_markers):
-        return OLLAMA_ROLE_MODELS.get("code", "qwen2.5-coder:7b")
-    if len(text) > 2500:
-        return OLLAMA_ROLE_MODELS.get("general", "llama3.2:latest")
-    return OLLAMA_ROLE_MODELS.get(default_role, OLLAMA_MODEL)
-
 def query_local_ollama(prompt, system_prompt="You are a helpful AI assistant.", model=None):
-    """Запрашивает локальную модель через Ollama для быстрых проверок."""
-    selected_model = select_ollama_model(model or classify_local_model(prompt))
-    is_gemma3 = "gemma3" in selected_model.lower()
-    url = f"{OLLAMA_HOST}/api/chat"
-    payload = {
-        "model": selected_model,
-        "messages": [
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": prompt}
-        ],
-        "stream": False,
-        "options": {}
-    }
-    if is_gemma3:
-        payload["options"]["thinking"] = True
-    elif "gemma2" in selected_model.lower() and "step" not in system_prompt.lower():
-        payload["messages"][0]["content"] = (
-            system_prompt + "\n\nВАЖНО: Прежде чем ответить, напиши короткий ход мыслей в 1-2 предложения, начиная с «🤔 Рассуждаю:». "
-            "Потом дай финальный ответ. Если новых событий нет — просто напиши «Нет изменений.»"
-        )
-    try:
-        start_time = time.time()
-        print(f"[Local Ollama] Запрос к локальной модели {selected_model}...")
-        response = requests.post(url, json=payload, timeout=10)
-        latency = time.time() - start_time
-        if response.status_code == 200:
-            res_data = response.json()
-            content = res_data.get("message", {}).get("content", "").strip()
-            if content:
-                print(f"[Local Ollama] Успешно! Время: {latency:.2f} сек")
-                return content
-    except Exception as e:
-        print(f"[Local Ollama] Ошибка: {e}")
+    """Deprecated: local Ollama removed. Always returns None."""
+    print("[Local Ollama] disabled (removed 2026-08-02) — use OpenRouter")
     return None
 
+
 def run_fast_local_analysis(chat_log_txt=""):
-    """Быстрый локальный анализ через Ollama с автоматическим переключением на OpenRouter при сбое."""
+    """Fast triage via OpenRouter (local Ollama removed)."""
     system_prompt = (
-        "Ты — локальный Диспетчер-Аналитик (быстрый triage). Твоя задача — "
-        "проверить последние логи за секунды и выдать чёткий вердикт.\n\n"
-        "### Алгоритм:\n"
-        "1. **Сканирование**: Пробегись по логам. Что изменилось с прошлого раза?\n"
-        "2. **Фильтрация**: Отсеки повторяющиеся/шумные сообщения. Выдели ТОЛЬКО новые события.\n"
-        "3. **Оценка**: 🟢 Рутина (всё штатно) / 🟡 Внимание (есть новая информация) / 🔴 Тревога (сбой/ошибка)\n"
-        "4. **Вердикт**: Если новых событий нет — только: «Статус: 🟢 Рутина. Новых событий нет.»\n\n"
+        "Ты — Диспетчер-Аналитик (быстрый triage). Твоя задача — "
+        "проверить последние логи и выдать чёткий вердикт.\n\n"
         "Формат ответа (строго):\n"
         "Статус: [🟢 Рутина / 🟡 Внимание / 🔴 Тревога]\n"
         "Сводка: (1 предложение, суть)\n"
         "Действие: (Нужно ли вмешательство? Если нет — «Не требуется»)"
     )
-    prompt = f"Последние сообщения в системе:\n{chat_log_txt}\n\nСделай быстрый диспетчерский вывод."
-    
-    res = query_local_ollama(prompt, system_prompt, model=OLLAMA_ROLE_MODELS.get("dispatcher", OLLAMA_MODEL))
-    if res:
-        return res
-    
-    print("[Fallback] Ollama недоступна, переключаюсь на OpenRouter для отчета...")
+    prompt = (
+        "Последние сообщения в системе:\n"
+        + str(chat_log_txt)
+        + "\n\nСделай быстрый диспетчерский вывод."
+    )
     return query_openrouter(prompt, system_prompt, model=DEFAULT_MODEL)
+
 
 def query_deep_reasoning(prompt, system_prompt, model=DEFAULT_MODEL):
     """Реализует глубокие рассуждения (System 2 CoT) в один проход,

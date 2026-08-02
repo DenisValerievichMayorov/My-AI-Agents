@@ -31,14 +31,14 @@ fi
 echo -e "${GREEN}✅ Папка Sync обнаружена по адресу: $SYNC_DIR${NC}"
 
 # 2. Backup existing configurations if they exist
-echo -e "${BLUE}[1/5] Резервное копирование локальных конфигов...${NC}"
+echo -e "${BLUE}[1/6] Резервное копирование локальных конфигов...${NC}"
 if [ -d "$HOME_DIR/.pi" ] && [ ! -L "$HOME_DIR/.pi" ]; then
     echo -e "${YELLOW}Предупреждение: Обнаружена локальная папка ~/.pi. Создаем бэкап...${NC}"
     mv "$HOME_DIR/.pi" "$HOME_DIR/.pi.bak_$(date +%F_%T)"
 fi
 
 # 3. Create symlinks for .pi settings directory
-echo -e "${BLUE}[2/5] Связывание директории настроек Pi...${NC}"
+echo -e "${BLUE}[2/6] Связывание директории настроек Pi...${NC}"
 if [ -d "$SYNC_DIR/.pi" ]; then
     ln -sf "$SYNC_DIR/.pi" "$HOME_DIR/.pi"
     echo -e "${GREEN}✅ Junction-ссылка успешно создана: ~/.pi -> ~/Sync/.pi${NC}"
@@ -48,7 +48,7 @@ else
 fi
 
 # 4. Create symlinks for Clinerules and Cursorrules (System Persona Instructions)
-echo -e "${BLUE}[3/5] Связывание правил поведения (.clinerules и .cursorrules)...${NC}"
+echo -e "${BLUE}[3/6] Связывание правил поведения (.clinerules и .cursorrules)...${NC}"
 if [ -f "$SYNC_DIR/.clinerules" ]; then
     ln -sf "$SYNC_DIR/.clinerules" "$HOME_DIR/.clinerules"
     echo -e "${GREEN}✅ Ссылка для .clinerules создана в $HOME_DIR/.clinerules${NC}"
@@ -59,7 +59,7 @@ if [ -f "$SYNC_DIR/.cursorrules" ]; then
 fi
 
 # 5. Add custom aliases to Shell Profile for easy execution
-echo -e "${BLUE}[4/5] Настройка переменных среды и алиасов...${NC}"
+echo -e "${BLUE}[4/6] Настройка переменных среды и алиасов...${NC}"
 SHELL_PROFILE=""
 if [ -f "$HOME_DIR/.zshrc" ]; then
     SHELL_PROFILE="$HOME_DIR/.zshrc"
@@ -68,10 +68,7 @@ elif [ -f "$HOME_DIR/.bashrc" ]; then
 fi
 
 if [ -n "$SHELL_PROFILE" ]; then
-    # Add loopback environment check for local Ollama in Termux
-    if ! grep -q "OLLAMA_HOST" "$SHELL_PROFILE"; then
-        echo -e "\n# GMC Ollama config" >> "$SHELL_PROFILE"
-        echo "export OLLAMA_HOST=127.0.0.1:11434" >> "$SHELL_PROFILE"
+    # Local Ollama removed 2026-08-02 — no OLLAMA_HOST
     fi
     # Add fast git-sync alias
     if ! grep -q "alias pi-sync" "$SHELL_PROFILE"; then
@@ -82,20 +79,14 @@ else
     echo -e "${YELLOW}Предупреждение: Файл профиля оболочки (.bashrc или .zshrc) не найден. Алиасы не настроены.${NC}"
 fi
 
-# 6. Verify local Ollama server status
-echo -e "${BLUE}[5/5] Проверка локального сервера моделей Ollama...${NC}"
-if command -v ollama &> /dev/null; then
-    echo -e "${GREEN}✅ Ollama установлена!${NC}"
-    if pgrep -x "ollama" > /dev/null; then
-        echo -e "${GREEN}🟢 Сервер Ollama запущен и работает в фоне.${NC}"
-    else
-        echo -e "${YELLOW}⚠️ Сервер Ollama не запущен. Вы можете запустить его командой: ollama serve &${NC}"
-    fi
+# 6. Install shared skills + token-orchestrator (Termux / Chromebook)
+echo -e "${BLUE}[5/6] Установка shared skills (token-orchestrator)...${NC}"
+if [[ -f "$SYNC_DIR/Scripts/install_shared_skills_unix.sh" ]]; then
+    bash "$SYNC_DIR/Scripts/install_shared_skills_unix.sh"
+    echo -e "${GREEN}✅ token-orchestrator и skills подключены${NC}"
 else
-    echo -e "${YELLOW}ℹ️ Подсказка: Вы можете установить локальный сервер моделей Ollama в Termux с помощью: pkg install ollama${NC}"
+    echo -e "${YELLOW}⚠️ install_shared_skills_unix.sh не найден — дождись Syncthing${NC}"
 fi
 
-echo -e "${BLUE}====================================================${NC}"
-echo -e "${GREEN}🎉 СИНХРОНИЗАЦИЯ УСПЕШНО ЗАВЕРШЕНА!${NC}"
-echo -e "${YELLOW}Pi Агент теперь полностью интегрирован в сеть GMC и обменивается сессиями с Windows и Chromebook.${NC}"
-echo -e "${BLUE}====================================================${NC}"
+# 7. Local Ollama removed 2026-08-02 — cloud models only
+echo -e "${BLUE}[6/6] Local Ollama/LM Studio disabled (cloud-only mesh).${NC}"
