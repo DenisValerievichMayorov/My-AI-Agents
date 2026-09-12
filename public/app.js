@@ -1,6 +1,11 @@
 let myUserId = null;
 let activePeerId = null;
+
+// PeerJS & WebSocket instances
+let peer = null;
 let ws = null;
+// Active PeerJS DataConnections: Map<peerId, DataConnection>
+const peerConnections = new Map();
 
 // Map<peerId, { isOnline: boolean, messages: Array }>
 const conversations = new Map();
@@ -26,70 +31,147 @@ const messageInput = document.getElementById('messageInput');
 init();
 
 async function init() {
-  await setupUserIdentity();
-  connectWebSocket();
+  setupUserIdentity();
+  initPeerJS();
+  connectWebSocketFallback();
   setupEventListeners();
 }
 
 // 1. Get or Generate 8-digit User ID
-async function setupUserIdentity() {
+function setupUserIdentity() {
   let storedId = localStorage.getItem('messenger_8digit_id');
   if (!storedId || !/^\d{8}$/.test(storedId)) {
-    try {
-      const res = await fetch('/api/generate-id');
-      const data = await res.json();
-      storedId = data.userId;
-      localStorage.setItem('messenger_8digit_id', storedId);
-    } catch (err) {
-      console.error('Failed to generate 8-digit ID:', err);
-      storedId = Math.floor(10000000 + Math.random() * 90000000).toString();
-      localStorage.setItem('messenger_8digit_id', storedId);
-    }
+    storedId = Math.floor(10000000 + Math.random() * 90000000).toString();
+    localStorage.setItem('messenger_8digit_id', storedId);
   }
 
   myUserId = storedId;
   myUserIdEl.textContent = myUserId;
 }
 
-// 2. Connect WebSocket
-function connectWebSocket() {
+// Prefix peer IDs to avoid collisions on public cloud PeerJS broker while keeping UI 8-digit
+const PEER_PREFIX = 'msg8d_';
+
+// 2. Initialize PeerJS P2P (Serverless for GitHub Pages)
+function initPeerJS() {
+  if (typeof Peer === 'undefined') {
+    console.warn('PeerJS library not available, using WebSocket fallback.');
+    return;
+  }
+
+  try {
+    peer = new Peer(PEER_PREFIX + myUserId, {
+      debug: 1
+    });
+
+    peer.on('open', (id) => {
+      console.log('PeerJS connected with 8-digit peer ID:', myUserId);
+    });
+
+    // Handle incoming P2P connections
+    peer.on('connection', (conn) => {
+      setupDataConnection(conn);
+    });
+
+    peer.on('error', (err) => {
+      console.warn('PeerJS error:', err.type, err);
+      if (err.type === 'peer-unavailable') {
+        showInputError('User ' + activePeerId + ' is offline or ID does not exist.');
+      }
+    });
+  } catch (err) {
+    console.warn('PeerJS init failed:', err);
+  }
+}
+
+// Setup incoming/outgoing DataConnection
+function setupDataConnection(conn) {
+  const rawPeerId = conn.peer.replace(PEER_PREFIX, '');
+
+  conn.on('open', () => {
+    peerConnections.set(rawPeerId, conn);
+    const conv = getOrCreateConversation(rawPeerId);
+    conv.isOnline = true;
+
+    if (activePeerId === rawPeerId) {
+      updatePeerStatusBadge(true);
+    }
+    renderContactsList();
+  });
+
+  conn.on('data', (data) => {
+    if (data && data.type === 'chat_message') {
+      const { message } = data;
+      const conv = getOrCreateConversation(rawPeerId);
+      conv.messages.push(message);
+
+      if (activePeerId === rawPeerId) {
+        appendMessage(message, false);
+      }
+      renderContactsList();
+    }
+  });
+
+  conn.on('close', () => {
+    peerConnections.delete(rawPeerId);
+    const conv = getOrCreateConversation(rawPeerId);
+    conv.isOnline = false;
+
+    if (activePeerId === rawPeerId) {
+      updatePeerStatusBadge(false);
+    }
+    renderContactsList();
+  });
+}
+
+// Connect to a peer via PeerJS
+function connectToPeerJS(target8DigitId) {
+  if (!peer || peer.destroyed) return null;
+
+  const existingConn = peerConnections.get(target8DigitId);
+  if (existingConn && existingConn.open) {
+    return existingConn;
+  }
+
+  const conn = peer.connect(PEER_PREFIX + target8DigitId);
+  setupDataConnection(conn);
+  return conn;
+}
+
+// 3. Connect WebSocket (Fallback for local server)
+function connectWebSocketFallback() {
   const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
   const wsUrl = `${protocol}//${window.location.host}`;
 
-  ws = new WebSocket(wsUrl);
+  try {
+    ws = new WebSocket(wsUrl);
 
-  ws.onopen = () => {
-    // Register user ID on socket server
-    ws.send(JSON.stringify({
-      type: 'register',
-      userId: myUserId
-    }));
-  };
+    ws.onopen = () => {
+      ws.send(JSON.stringify({
+        type: 'register',
+        userId: myUserId
+      }));
+    };
 
-  ws.onmessage = (event) => {
-    try {
-      const data = JSON.parse(event.data);
-      handleServerMessage(data);
-    } catch (err) {
-      console.error('Error parsing WS message:', err);
-    }
-  };
+    ws.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        handleWsMessage(data);
+      } catch (err) {
+        console.error('WS parse error:', err);
+      }
+    };
 
-  ws.onclose = () => {
-    console.log('WS disconnected. Reconnecting in 3 seconds...');
-    setTimeout(connectWebSocket, 3000);
-  };
-
-  ws.onerror = (err) => {
-    console.error('WS error:', err);
-  };
+    ws.onclose = () => {};
+    ws.onerror = () => {};
+  } catch (e) {
+    // Ignore WS failure on pure static GitHub Pages hosting
+  }
 }
 
-// 3. Handle incoming WS messages
-function handleServerMessage(data) {
+function handleWsMessage(data) {
   switch (data.type) {
     case 'registered':
-      // data.onlineUsers contains currently online user IDs
       if (data.onlineUsers && Array.isArray(data.onlineUsers)) {
         data.onlineUsers.forEach(peerId => {
           getOrCreateConversation(peerId).isOnline = true;
@@ -98,7 +180,7 @@ function handleServerMessage(data) {
       }
       break;
 
-    case 'user_status':
+    case 'user_status': {
       const { userId, isOnline } = data;
       if (userId !== myUserId) {
         const conv = getOrCreateConversation(userId);
@@ -109,6 +191,7 @@ function handleServerMessage(data) {
         renderContactsList();
       }
       break;
+    }
 
     case 'new_message': {
       const { message } = data;
@@ -139,9 +222,6 @@ function handleServerMessage(data) {
     case 'error':
       showInputError(data.message);
       break;
-
-    default:
-      console.log('Unhandled message:', data);
   }
 }
 
@@ -158,7 +238,6 @@ function getOrCreateConversation(peerId) {
 
 // 4. Setup DOM Event Listeners
 function setupEventListeners() {
-  // Copy ID
   copyIdBtn.addEventListener('click', () => {
     navigator.clipboard.writeText(myUserId);
     const origText = copyIdBtn.textContent;
@@ -166,13 +245,11 @@ function setupEventListeners() {
     setTimeout(() => copyIdBtn.textContent = origText, 1500);
   });
 
-  // Regenerate ID
-  regenIdBtn.addEventListener('click', async () => {
+  regenIdBtn.addEventListener('click', () => {
     localStorage.removeItem('messenger_8digit_id');
     location.reload();
   });
 
-  // Start chat button
   startChatBtn.addEventListener('click', () => {
     handleStartChat();
   });
@@ -183,17 +260,56 @@ function setupEventListeners() {
     }
   });
 
-  // Send message
   messageForm.addEventListener('submit', (e) => {
     e.preventDefault();
     const text = messageInput.value.trim();
-    if (!text || !activePeerId || !ws || ws.readyState !== WebSocket.OPEN) return;
+    if (!text || !activePeerId) return;
 
-    ws.send(JSON.stringify({
-      type: 'send_message',
+    const msgObj = {
+      id: 'msg_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
+      senderId: myUserId,
       recipientId: activePeerId,
-      text
-    }));
+      text: text,
+      timestamp: new Date().toISOString()
+    };
+
+    let sentViaP2P = false;
+    const p2pConn = peerConnections.get(activePeerId);
+
+    if (p2pConn && p2pConn.open) {
+      p2pConn.send({ type: 'chat_message', message: msgObj });
+      sentViaP2P = true;
+    }
+
+    let sentViaWS = false;
+    if (ws && ws.readyState === WebSocket.OPEN) {
+      ws.send(JSON.stringify({
+        type: 'send_message',
+        recipientId: activePeerId,
+        text
+      }));
+      sentViaWS = true;
+    }
+
+    if (sentViaP2P && !sentViaWS) {
+      // Local append if sent directly via P2P
+      const conv = getOrCreateConversation(activePeerId);
+      conv.messages.push(msgObj);
+      appendMessage(msgObj, true);
+      renderContactsList();
+    } else if (!sentViaP2P && !sentViaWS) {
+      // Attempt connecting on demand
+      const conn = connectToPeerJS(activePeerId);
+      if (conn) {
+        conn.on('open', () => {
+          conn.send({ type: 'chat_message', message: msgObj });
+          const conv = getOrCreateConversation(activePeerId);
+          conv.messages.push(msgObj);
+          appendMessage(msgObj, true);
+          renderContactsList();
+        });
+      }
+    }
 
     messageInput.value = '';
     messageInput.focus();
@@ -228,23 +344,26 @@ async function selectPeerChat(peerId) {
   activePeerId = peerId;
   const conv = getOrCreateConversation(peerId);
 
-  // Fetch status & history from API
+  // Connect via PeerJS WebRTC
+  connectToPeerJS(peerId);
+
+  // Also query REST API if available
   try {
     const statusRes = await fetch(`/api/user-status/${peerId}`);
     if (statusRes.ok) {
       const statusData = await statusRes.json();
-      conv.isOnline = statusData.isOnline;
+      if (statusData.isOnline) conv.isOnline = true;
     }
 
     const historyRes = await fetch(`/api/history?userId=${myUserId}&peerId=${peerId}`);
     if (historyRes.ok) {
       const historyData = await historyRes.json();
-      if (historyData.history) {
+      if (historyData.history && historyData.history.length > 0) {
         conv.messages = historyData.history;
       }
     }
   } catch (err) {
-    console.error('Failed to fetch chat history:', err);
+    // Static hosting mode without REST backend
   }
 
   // Update UI
