@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>8-Digit Messenger</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- PeerJS for free P2P serverless messaging on GitHub Pages -->
+  <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+</head>
+<body>
+  <div class="app-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h2>⚡ 8-Digit Web Chat</h2>
+        <div class="my-id-card">
+          <span class="label">Your 8-Digit ID:</span>
+          <div class="id-display-box">
+            <span id="myUserId" class="id-number">Loading...</span>
+            <button id="copyIdBtn" title="Copy ID">📋</button>
+            <button id="regenIdBtn" title="New ID">🔄</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="new-chat-box">
+        <label for="peerInput">Start new chat</label>
+        <div class="input-group">
+          <input
+            type="text"
+            id="peerInput"
+            placeholder="Enter 8-digit number..."
+            maxlength="8"
+            pattern="\d{8}"
+          />
+          <button id="startChatBtn">Chat</button>
+        </div>
+        <div id="inputError" class="error-msg"></div>
+      </div>
+
+      <div class="chats-list-section">
+        <h3>Conversations</h3>
+        <ul id="contactsList" class="contacts-list">
+          <li class="empty-state">No conversations yet. Enter an 8-digit code above to start texting!</li>
+        </ul>
+      </div>
+    </aside>
+
+    <!-- Main Chat Area -->
+    <main class="chat-area">
+      <div id="noChatSelected" class="empty-chat-view">
+        <div class="welcome-box">
+          <h2>Welcome to 8-Digit Messenger</h2>
+          <p>Share your 8-digit ID code with anyone or enter an 8-digit number on the left to start texting immediately!</p>
+          <p style="margin-top: 10px; font-size: 0.8rem; color: #38bdf8;">🌐 Powered by PeerJS (Works 100% free on GitHub Pages)</p>
+        </div>
+      </div>
+
+      <div id="activeChatView" class="active-chat-view hidden">
+        <header class="chat-header">
+          <div class="chat-header-info">
+            <h3>Chatting with <span id="activePeerId">88888888</span></h3>
+            <span id="peerStatusBadge" class="status-badge offline">Offline</span>
+          </div>
+        </header>
+
+        <div id="messagesContainer" class="messages-container">
+          <!-- Messages will be injected here -->
+        </div>
+
+        <form id="messageForm" class="message-form">
+          <input
+            type="text"
+            id="messageInput"
+            placeholder="Type a message..."
+            autocomplete="off"
+            required
+          />
+          <button type="submit" id="sendBtn">Send ➔</button>
+        </form>
+      </div>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
